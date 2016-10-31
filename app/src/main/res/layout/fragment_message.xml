@@ -1,0 +1,38 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/normalWindow"
+    android:background="@drawable/content_bg"
+    tools:context="com.thinkware.florida.ui.fragment.MessageFragment">
+
+    <TextView
+        style="@style/txtTitle"
+        android:id="@+id/txt_content"
+        android:layout_width="366dp"
+        android:layout_height="250dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="85dp"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_prev"
+        android:layout_width="61dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="23dp"
+        android:layout_marginTop="365dp"
+        android:src="@drawable/prev_button"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_next"
+        android:layout_width="61dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="84dp"
+        android:layout_marginTop="365dp"
+        android:src="@drawable/next_button"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_list"
+        android:layout_width="141dp"
+        android:layout_height="61dp"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="366dp"
+        android:src="@drawable/list_button"/>
+</FrameLayout>

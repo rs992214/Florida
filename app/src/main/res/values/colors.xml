@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="black_overlay">#66000000</color>
+
+    <color name="color_baff00">#baff00</color>
+    <color name="color_2d2d2d">#2d2d2d</color>
+
+    <drawable name="drawable_3a3a3a">#3a3a3a</drawable>
+    <drawable name="drawable_7f3a3a3a">#7f3a3a3a</drawable>
+</resources>

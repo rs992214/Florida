@@ -1,0 +1,66 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/passengerinfo_bg2"
+    tools:context="com.thinkware.florida.ui.fragment.PassengerInfoFragment">
+
+    <TextView
+        android:id="@+id/txt_callnum"
+        android:layout_width="105dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="85dp"
+        android:layout_marginLeft="178dp"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:textColor="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/txt_phonenumber"
+        android:layout_width="210dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="85dp"
+        android:layout_marginLeft="376dp"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:textColor="@color/color_baff00"/>
+
+    <com.thinkware.florida.ui.view.AutoResizeTextView
+        android:id="@+id/txt_location"
+        android:layout_width="555dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="141dp"
+        android:layout_marginLeft="178dp"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:textColor="@android:color/white"
+        android:maxLines="2"/>
+
+    <TextView
+        android:id="@+id/txt_location_detail"
+        android:layout_width="555dp"
+        android:layout_height="128dp"
+        android:layout_marginTop="235dp"
+        android:layout_marginLeft="178dp"
+        android:padding="10dp"
+        android:textSize="30sp"
+        android:textColor="@android:color/white"/>
+
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_guide"
+        android:layout_width="314dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="380dp"
+        android:layout_marginLeft="62dp"
+        android:src="@drawable/guide2"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_fail"
+        android:layout_width="314dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="380dp"
+        android:layout_marginLeft="424dp"
+        android:src="@drawable/fail2"/>
+
+</FrameLayout>

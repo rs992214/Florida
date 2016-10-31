@@ -1,0 +1,144 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="MenuButton">
+        <item name="android:layout_width">152dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="numButton">
+        <item name="android:layout_width">82dp</item>
+        <item name="android:layout_height">71dp</item>
+    </style>
+
+    <style name="normalWindow">
+        <item name="android:layout_width">460dp</item>
+        <item name="android:layout_height">440dp</item>
+        <item name="android:layout_marginTop">18dp</item>
+        <item name="android:layout_marginLeft">169dp</item>
+    </style>
+
+    <style name="txtTitle">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="txtCenter">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="txtCenterNormal">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="txtConfig">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+    </style>
+
+    <style name="txtDate">
+        <item name="android:layout_width">86dp</item>
+        <item name="android:layout_height">101dp</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/color_baff00</item>
+        <item name="android:gravity">right|center_vertical</item>
+    </style>
+
+    <style name="txtHighlight">
+        <item name="android:textSize">23sp</item>
+        <item name="android:textColor">@color/color_baff00</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="txtNormal">
+        <item name="android:textSize">23sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="txtDialogTitle">
+        <item name="android:textSize">23sp</item>
+        <item name="android:textColor">@color/color_baff00</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="txtHighlightBig">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/color_baff00</item>
+    </style>
+
+    <style name="txtTestValue">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="txtContent">
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="txtList">
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@drawable/selector_color_listview</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="txtButton">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="txtCallNumAttr">
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="txtCallNumMoney">
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+    <style name="FullscreenThemeTranslucent" parent="FullscreenTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    </style>
+</resources>

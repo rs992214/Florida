@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">인솔라인</string>
+    <string name="app_name_tag">Florida</string>
+
+    <string name="indivisual">개인</string>
+    <string name="corporation">법인</string>
+    <string name="distance">거리</string>
+    <string name="done">확인</string>
+    <string name="cancel">취소</string>
+    <string name="yes_call">(YES콜)</string>
+    <string name="version">버전</string>
+
+    <!-- ServiceManager -->
+    <string name="need_certify">사용자 인증을 해주십시오.</string>
+    <string name="request_certify">사용자 인증 요청 중입니다.</string>
+    <string name="initialized_modem">통신 모뎀 초기화 중입니다...</string>
+    <string name="not_available_network">모뎀 연결에 실패하였습니다.</string>
+    <string name="fail_certify">차량 인증에 실패되었습니다.</string>
+    <string name="fail_connect_server">서버 접속에 실패하였습니다.</string>
+    <string name="certify_completed">사용자 인증이 완료되었습니다.</string>
+    <string name="rest">휴식</string>
+    <string name="request_rest">휴식 요청중입니다.</string>
+    <string name="success_rest">휴식 요청이 처리되었습니다</string>
+    <string name="drive">운행</string>
+    <string name="request_drive">운행 요청중입니다.</string>
+    <string name="success_drive">운행 요청이 처리되었습니다.</string>
+    <string name="empty_notice">공지사항이 없습니다.</string>
+
+    <string name="request_wait_area">대기 배차 목록 요청중입니다</string>
+    <string name="success_request_wait_area">대기 배차 목록 요청에 성공했습니다</string>
+    <string name="request_wait">대기 요청중입니다</string>
+    <string name="success_request_wait">대기 요청에 성공했습니다</string>
+    <string name="fail_request_wait">대기 요청에 실패했습니다</string>
+    <string name="request_cancel_wait">대기 취소 요청중입니다</string>
+    <string name="success_request_cancel_wait">대기 취소했습니다</string>
+
+    <!-- 콜수조회 -->
+    <string name="month">%1$d월</string>
+    <string name="day">%1$d일</string>
+
+    <!-- 환경설정 -->
+    <string name="app_version">App: %1$s</string>
+    <string name="ota_version">OTA: %1$s</string>
+    <string name="other_version">Other: %1$s</string>
+
+    <!-- 고객 정보 -->
+    <string name="request_caller_info">고객정보 요청중입니다.</string>
+    <string name="empty_caller">배차되지 않았습니다.</string>
+
+    <!-- 인증 실패 -->
+    <string name="fail_cert">인증실패</string>
+    <string name="fail_car">등록되지 않은 차량입니다.</string>
+    <string name="fail_phone_number">등록되지 않은 전화번호입니다.</string>
+    <string name="fail_panelty">기사패널티 인증실패!</string>
+    <string name="fail_vacation">휴무 조 인증실패!</string>
+    <string name="fail_meter_device">미터기 서비스 초기화실패</string>
+    <string name="fail_vacancy_device">빈차등 서비스 초기화실패</string>
+    <string name="fail_emergency_device">Emergency 서비스 초기화실패</string>
+
+    <string name="cannot_query_wait">예약 또는 주행중입니다.\n요청/취소할 수 없습니다.</string>
+    <string name="boarding_or_reservation">배차 예약 또는 탑승상태입니다.</string>
+
+    <string name="check_device_tachometer">미터기 연결 상태를 확인해주세요.</string>
+    <string name="check_device_vacancylight">빈차등 연결 상태를 확인해주세요.</string>
+</resources>

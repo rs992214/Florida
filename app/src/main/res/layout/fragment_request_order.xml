@@ -1,0 +1,55 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/requestorder_bg"
+    tools:context="com.thinkware.florida.ui.fragment.RequestOrderFragment">
+
+    <com.thinkware.florida.ui.view.AutoResizeTextView
+        android:id="@+id/txt_location"
+        android:layout_width="570dp"
+        android:layout_height="125dp"
+        android:layout_marginTop="77dp"
+        android:layout_marginLeft="62dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:textSize="70sp"
+        android:textColor="@android:color/white"
+        android:maxLines="2"
+        android:text="천안역입니다." />
+
+    <TextView
+        android:id="@+id/txt_location_detail"
+        android:layout_width="670dp"
+        android:layout_height="155dp"
+        android:layout_marginTop="211dp"
+        android:layout_marginLeft="62dp"
+        android:padding="15dp"
+        android:textSize="30sp"
+        android:textColor="@android:color/white"
+        android:text="교통센터 방면 50m" />
+
+    <com.thinkware.florida.ui.view.CropImageView
+        android:id="@+id/progress_count"
+        android:layout_width="120dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="637dp"
+        android:src="@drawable/count"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_request"
+        android:layout_width="314dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="380dp"
+        android:layout_marginLeft="62dp"
+        android:src="@drawable/request"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_refuse"
+        android:layout_width="314dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="380dp"
+        android:layout_marginLeft="423dp"
+        android:src="@drawable/refuse"/>
+</FrameLayout>

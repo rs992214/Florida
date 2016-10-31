@@ -1,0 +1,1 @@
+include ':app', ':externaldevice', ':utility', ':externaldevice-aidl'

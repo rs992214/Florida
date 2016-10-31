@@ -1,0 +1,19 @@
+{
+    "serviceNumber" : 0,
+    "isCorporation" : false,
+    "corporationCode" : 0,
+    "carId" : 0,
+    "driverPhoneNumber" : "",
+    "callServerIp" : "183.99.72.173",
+    "callServerPort" : 3000,
+    "updateServerIp" : "183.99.72.173",
+    "updateServerPort" : 3060,
+    "pst" : 30,
+    "psd" : 3000,
+    "rc" : 7,
+    "rt" : 7,
+    "cvt" : 6,
+    "ls" : false,
+    "isVacancyLight" : true,
+    "meterDeviceType" : ""
+}

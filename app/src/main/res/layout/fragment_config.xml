@@ -1,0 +1,360 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg">
+
+    <Button
+        android:id="@+id/btn_corporation"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:background="#00000000" />
+
+    <!-- Test button -->
+    <Button
+        android:id="@+id/btn_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="680dp"
+        android:layout_marginTop="16dp"
+        android:text="기기 테스트" />
+
+    <!-- Service -->
+    <TextView
+        android:id="@+id/txt_service_code"
+        style="@style/txtConfig"
+        android:layout_width="51dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="117dp"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/selector_blank_01" />
+
+    <ToggleButton
+        android:id="@+id/btn_iscorp"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="170dp"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/selector_iscorp"
+        android:textOff=""
+        android:textOn="" />
+
+    <TextView
+        android:id="@+id/txt_corp_code"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="256dp"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/selector_blank_02" />
+
+    <TextView
+        android:id="@+id/txt_car_number"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="325dp"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/selector_blank_03"
+        android:maxLength="4" />
+
+
+    <!-- phone -->
+    <TextView
+        android:id="@+id/txt_phone_01"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="113dp"
+        android:layout_marginTop="116dp"
+        android:background="@drawable/selector_blank_03"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_phone_02"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="201dp"
+        android:layout_marginTop="116dp"
+        android:background="@drawable/selector_blank_03"
+        android:maxLength="4" />
+
+    <TextView
+        android:id="@+id/txt_phone_03"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="289dp"
+        android:layout_marginTop="116dp"
+        android:background="@drawable/selector_blank_03"
+        android:maxLength="4" />
+
+    <!-- Version -->
+    <TextView
+        style="@style/txtCenterNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="168dp"
+        android:text="VERSION"
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:layout_width="470dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="187dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/txt_app_ver"
+            style="@style/txtCenterNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:id="@+id/txt_ota_ver"
+            style="@style/txtCenterNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:id="@+id/txt_other_ver"
+            style="@style/txtCenterNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp" />
+    </LinearLayout>
+
+
+    <!-- Call App Server IP/Port -->
+    <TextView
+        android:id="@+id/txt_appip_1"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="113dp"
+        android:layout_marginTop="232dp"
+        android:background="@drawable/selector_blank_02"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_appip_2"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="181dp"
+        android:layout_marginTop="232dp"
+        android:background="@drawable/selector_blank_02"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_appip_3"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="249dp"
+        android:layout_marginTop="232dp"
+        android:background="@drawable/selector_blank_02"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_appip_4"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="317dp"
+        android:layout_marginTop="232dp"
+        android:background="@drawable/selector_blank_02"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_app_port"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="396dp"
+        android:layout_marginTop="232dp"
+        android:background="@drawable/selector_blank_03"
+        android:maxLength="4" />
+
+    <!-- Update Server IP/Port -->
+    <TextView
+        android:id="@+id/txt_updateip_1"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="113dp"
+        android:layout_marginTop="276dp"
+        android:background="@drawable/selector_blank_02"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_updateip_2"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="181dp"
+        android:layout_marginTop="276dp"
+        android:background="@drawable/selector_blank_02"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_updateip_3"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="249dp"
+        android:layout_marginTop="276dp"
+        android:background="@drawable/selector_blank_02"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_updateip_4"
+        style="@style/txtConfig"
+        android:layout_width="64dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="317dp"
+        android:layout_marginTop="276dp"
+        android:background="@drawable/selector_blank_02"
+        android:maxLength="3" />
+
+    <TextView
+        android:id="@+id/txt_update_port"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="396dp"
+        android:layout_marginTop="276dp"
+        android:background="@drawable/selector_blank_03"
+        android:maxLength="4" />
+
+
+    <!-- PST, PSD, RC, RT, CVT, LS -->
+    <TextView
+        android:id="@+id/txt_pst"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="331dp"
+        android:background="@drawable/selector_blank_03" />
+
+    <TextView
+        android:id="@+id/txt_psd"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="229dp"
+        android:layout_marginTop="331dp"
+        android:background="@drawable/selector_blank_03" />
+
+    <TextView
+        android:id="@+id/txt_rc"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="373dp"
+        android:background="@drawable/selector_blank_03" />
+
+    <TextView
+        android:id="@+id/txt_rt"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="229dp"
+        android:layout_marginTop="373dp"
+        android:background="@drawable/selector_blank_03" />
+
+    <TextView
+        android:id="@+id/txt_cvt"
+        style="@style/txtConfig"
+        android:layout_width="84dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="415dp"
+        android:background="@drawable/selector_blank_03" />
+
+    <ToggleButton
+        android:id="@+id/btn_savelog"
+        style="@style/txtConfig"
+        android:layout_width="51dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="229dp"
+        android:layout_marginTop="415dp"
+        android:background="@drawable/selector_islogging"
+        android:textOff=""
+        android:textOn="" />
+
+
+    <!-- 번호 패드 -->
+    <com.thinkware.florida.ui.view.NumberPadView
+        android:id="@+id/numberpad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="514dp"
+        android:layout_marginTop="71dp"
+        app:numberPadType="0" />
+
+
+    <!-- 승빈차 신호 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="340dp"
+        android:layout_marginTop="331dp"
+        android:background="@color/black_overlay"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            style="@style/txtCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="승빈차 신호" />
+
+        <RadioGroup
+            android:id="@+id/radiogroup_signal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radio_light"
+                style="@style/txtCenter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="빈차등" />
+
+            <RadioButton
+                android:id="@+id/radio_meter"
+                style="@style/txtCenter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="미터기" />
+        </RadioGroup>
+    </LinearLayout>
+
+
+    <!-- 수정/닫기 -->
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_modify"
+        android:layout_width="141dp"
+        android:layout_height="61dp"
+        android:layout_marginLeft="500dp"
+        android:layout_marginTop="392dp"
+        android:src="@drawable/modify_button" />
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_close"
+        android:layout_width="141dp"
+        android:layout_height="61dp"
+        android:layout_marginLeft="644dp"
+        android:layout_marginTop="392dp"
+        android:src="@drawable/close_button" />
+
+
+</FrameLayout>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <bitmap android:src="@drawable/blank02" android:gravity="right"/>
+    </item>
+
+    <item android:state_focused="false">
+        <bitmap android:src="@drawable/blank02" android:gravity="left"/>
+    </item>
+</selector>

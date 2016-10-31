@@ -1,0 +1,44 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/list_bg_popup"
+    tools:context="com.thinkware.florida.ui.fragment.MessageFragment">
+
+    <TextView
+        android:id="@+id/txt_content"
+        android:layout_width="666dp"
+        android:layout_height="340dp"
+        android:layout_marginLeft="62dp"
+        android:layout_marginTop="89dp"
+        android:padding="15dp"
+        android:textSize="28sp"
+        android:textColor="@android:color/white"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_prev"
+        android:layout_width="61dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="23dp"
+        android:layout_marginTop="365dp"
+        android:visibility="gone"
+        android:src="@drawable/prev_button"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_next"
+        android:layout_width="61dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="84dp"
+        android:layout_marginTop="365dp"
+        android:visibility="gone"
+        android:src="@drawable/next_button"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_list"
+        android:layout_width="141dp"
+        android:layout_height="61dp"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="366dp"
+        android:visibility="gone"
+        android:src="@drawable/list_button"/>
+</FrameLayout>

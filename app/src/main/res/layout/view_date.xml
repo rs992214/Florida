@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        style="@style/txtDate"
+        android:id="@+id/txt_month"
+        android:text="12월"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:orientation="vertical">
+        <com.thinkware.florida.ui.view.StatusImageView
+            android:id="@+id/btn_monthup"
+            android:layout_width="70dp"
+            android:layout_height="47dp"
+            android:src="@drawable/up_button"/>
+        <com.thinkware.florida.ui.view.StatusImageView
+            android:id="@+id/btn_monthdown"
+            android:layout_width="70dp"
+            android:layout_height="47dp"
+            android:src="@drawable/down_button"/>
+    </LinearLayout>
+
+    <TextView
+        style="@style/txtDate"
+        android:id="@+id/txt_day"
+        android:layout_marginLeft="10dp"
+        android:text="12일"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:orientation="vertical">
+        <com.thinkware.florida.ui.view.StatusImageView
+            android:id="@+id/btn_dayup"
+            android:layout_width="70dp"
+            android:layout_height="47dp"
+            android:src="@drawable/up_button"/>
+        <com.thinkware.florida.ui.view.StatusImageView
+            android:id="@+id/btn_daydown"
+            android:layout_width="70dp"
+            android:layout_height="47dp"
+            android:src="@drawable/down_button"/>
+    </LinearLayout>
+</LinearLayout>

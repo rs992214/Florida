@@ -1,6 +1,5 @@
 package com.thinkware.florida.service;
 
-import android.app.ActivityManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -38,8 +37,6 @@ import com.thinkware.florida.ui.MainActivity;
 import com.thinkware.florida.ui.MainApplication;
 import com.thinkware.florida.ui.view.CallStatusView;
 import com.thinkware.florida.utility.log.LogHelper;
-
-import java.util.List;
 
 
 /**
@@ -81,7 +78,7 @@ public class AlwaysOnService extends Service implements View.OnTouchListener, Vi
                     // 지도뷰 위에서만 아이콘이 보여지도록 처리
                     if (statusView != null) {
                         // 아이나비 Map Activity : com.thinkware.sundo.inavi3d.INavi3DActivity
-                        if (isForegroundActivity("INavi3DActivity")) {
+                        if (((MainApplication) getApplication()).isForegroundActivity("INavi3DActivity")) {
                             if (statusView.getVisibility() == View.GONE) {
                                 statusView.setVisibility(View.VISIBLE);
                             }
@@ -113,7 +110,7 @@ public class AlwaysOnService extends Service implements View.OnTouchListener, Vi
         super.onCreate();
 
         cfgLoader = ConfigurationLoader.getInstance();
-        scenarioService = ((MainApplication)getApplication()).getScenarioService();
+        scenarioService = ((MainApplication) getApplication()).getScenarioService();
         bindCallbackServices();
 
         statusView = new CallStatusView(this);
@@ -182,22 +179,6 @@ public class AlwaysOnService extends Service implements View.OnTouchListener, Vi
         topLeftParams.width = 0;
         topLeftParams.height = 0;
         windowManager.addView(topLeftView, topLeftParams);
-    }
-
-    private boolean isForegroundActivity(String clsName) {
-        try {
-            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-            if (tasks != null && tasks.size() > 0) {
-                ActivityManager.RunningTaskInfo task = tasks.get(0);
-                ComponentName cn = task.topActivity;
-                String name = (cn == null) ? "" : cn.getClassName();
-                return name.contains(clsName);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
     }
 
     @Nullable

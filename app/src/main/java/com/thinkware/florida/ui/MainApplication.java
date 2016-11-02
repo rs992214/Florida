@@ -1,9 +1,11 @@
 package com.thinkware.florida.ui;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Application
@@ -82,6 +85,28 @@ public class MainApplication extends Application {
             }
         }
         return false;
+    }
+
+    /**
+     * @return 최상위 Activity
+     */
+    public Activity getTopActivity() {
+        if (activities == null) {
+            return null;
+        } else {
+            return activities.get(activities.size() - 1);
+        }
+    }
+
+    /**
+     * @return 최상위 Activity의 바로 아래 Activity
+     */
+    public Activity getBelowActivity() {
+        if (activities == null || activities.size() < 2) {
+            return null;
+        } else {
+            return activities.get(activities.size() - 2);
+        }
     }
 
     public Activity getActivity(Class<?> cls) {
@@ -231,5 +256,21 @@ public class MainApplication extends Application {
         } else {
             return files[1].getAbsolutePath() + File.separator + "log";
         }
+    }
+
+    public boolean isForegroundActivity(String packageOrClassName) {
+        try {
+            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+            if (tasks != null && tasks.size() > 0) {
+                ActivityManager.RunningTaskInfo task = tasks.get(0);
+                ComponentName cn = task.topActivity;
+                String name = (cn == null) ? "" : cn.getClassName();
+                return name.contains(packageOrClassName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

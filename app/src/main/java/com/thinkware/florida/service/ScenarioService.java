@@ -439,44 +439,44 @@ public class ScenarioService extends Service {
     }
 
     private void launchActivity(Class<?> cls) {
+        // 인증 완료 후 지도 화면 -> 메시지(공지사항, 콜 등) 수신 -> 메시지(공지사항, 콜 등) 창을 닫을 때 지도 화면이 보여져야 한다.
+        // Activity 실행시 FLAG_ACTIVITY_NEW_TASK를 사용하더라도 taskAffinity가 MainActivity와 같아서
+        // 동일 Task 내에서 Activity가 실행된다. (FLAG_ACTIVITY_MULTIPLE_TASK를 같이 사용하면 무조건 다른 Task로
+        // Activity를 실행 가능하나 Task가 여러개 생성됨에 따라 발생되는 이슈들에 대한 검증이 현재 어려우므로 사용이 어렵다.)
+
+        // 위의 이슈로 메시지 창을 닫았을 때 MainActivity가 onResume 된다.
+        // 콜 메인 화면 대신 지도 화면을 보여주기 위해서 현재 최상위 Activity가 MainActivity일 경우에만
+        // background/foreground FLAG를 저장해 두었다가 BaseActivity.finishWithINavi()에서 이를 보고 지도를 실행하도록 한다.
+        Activity topAct = ((MainApplication) getApplication()).getTopActivity();
+        if (topAct != null && topAct.getClass().getSimpleName().contains("MainActivity")) {
+            isPrevStatusBackground = !((MainApplication) getApplication()).isForegroundActivity(getPackageName());
+            LogHelper.write("#### isPrevStatusBackground = " + isPrevStatusBackground);
+        } else {
+            LogHelper.write("#### isPrevStatusBackground = " + (topAct == null ? "null" : topAct.getClass().getName()));
+        }
         Intent intent = new Intent(ScenarioService.this, cls);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
     private void showNoticePopupActivity() {
+        LogHelper.write("#### showNoticePopupActivity()");
         WavResourcePlayer.getInstance(context).play(R.raw.voice_115);
-        // 이슈 : 앱 초기화 -> 단말 재부팅 -> 환경설정 정보 입력 -> 인증 -> 지도 -> 공지사항 -> 공지사항 닫았을 때 메인화면 보여짐
-        // 간헐적으로 아이나비가 늦게 구동 되어 App의 background 상태가 정상적으로 체크 되지 않는다.
-        // 공지사항은 서비스 응답에 의해서만 보여지므로 background Flag를 항상 true 변경하여 이슈 해결 한다.
-        isPrevStatusBackground = true;
         launchActivity(NoticePopupActivity.class);
     }
 
     private void showPassengerPopupActivity() {
-        boolean isBackground = ((MainApplication) getApplication()).isBackground();
-        LogHelper.d(">> isBackground = " + isBackground);
-        if (isBackground) {
-            isPrevStatusBackground = true;
-        }
+        LogHelper.write("#### showPassengerPopupActivity()");
         launchActivity(PassengerInfoPopupActivity.class);
     }
 
     private void showMessagePopupActivity() {
-        boolean isBackground = ((MainApplication) getApplication()).isBackground();
-        LogHelper.d(">> isBackground = " + isBackground);
-        if (isBackground) {
-            isPrevStatusBackground = true;
-        }
+        LogHelper.write("#### showMessagePopupActivity()");
         launchActivity(MessagePopupActivity.class);
     }
 
     private void showRequestOrderPopupActivity() {
-        boolean isBackground = ((MainApplication) getApplication()).isBackground();
-        LogHelper.d(">> isBackground = " + isBackground);
-        if (isBackground) {
-            isPrevStatusBackground = true;
-        }
+        LogHelper.write("#### showRequestOrderPopupActivity()");
         launchActivity(RequestOrderPopupActivity.class);
     }
 

@@ -1,11 +1,15 @@
 package com.thinkware.florida.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -47,6 +51,11 @@ import com.thinkware.florida.ui.fragment.ServiceStatusFragment;
 import com.thinkware.florida.ui.fragment.WaitCallFragment;
 import com.thinkware.florida.utility.log.LogHelper;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static com.thinkware.florida.external.service.data.TachoMeterData.STATUS_CALL;
 import static com.thinkware.florida.external.service.data.TachoMeterData.STATUS_DRIVING;
 import static com.thinkware.florida.external.service.data.TachoMeterData.STATUS_EXTRA_CHARGE;
@@ -55,6 +64,8 @@ import static com.thinkware.florida.external.service.data.TachoMeterData.STATUS_
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final int REQUEST_CODE_CONFIG = 1000;
+    private static final int USB_VENDOR_ID = 1250;
+    private static final int USB_PRODUCT_ID = 5140;
 
     View menuService, menuQueryCall, menuReqWait, menuCallerInfo, menuNotice, menuMessage, menuConfig, menuExit;
     TextView txtCorpInfo, txtVersionInfo;
@@ -64,6 +75,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private String modemNumber;
     private Packets.BoardType boardType = Packets.BoardType.Empty;
     private int debugCount;
+    private boolean isAttachedUSB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,15 +106,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         cfgLoader = ConfigurationLoader.getInstance();
         txtCorpInfo = (TextView) findViewById(R.id.corporation_type);
         txtVersionInfo = (TextView) findViewById(R.id.version_info);
+
+        registerUsbReceiver();
         showVersionInfo();
 
         FragmentUtil.replace(getSupportFragmentManager(), new ServiceManagementFragment());
 
         callTrafficReport();
-        callOTAUpgrade();
 
         if (NetworkManager.getInstance().isAvailableNetwork(this)) {
             requestModemNumber();
+            // 네트워크가 연결 되어 있다면 Updater를 바로 호출 한다.
+            callOTAUpgrade();
+        } else {
+            // 네트워크가 연결 되어 있지 않다면 모뎀이 아직 부팅되지 않은 것이므로
+            // 30초 후에 Updater를 호출 한다.
+            Timer t = new Timer();
+            t.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    callOTAUpgrade();
+                }
+            }, 30 * 1000);
         }
 
         if (!hasConfiguration()) {
@@ -118,6 +143,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         unbindLocalServices();
         unbindCallbackServices();
         WavResourcePlayer.getInstance(this).release();
+        unregisterReceiver(usbReceiver);
     }
 
     @Override
@@ -302,14 +328,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void reset() {
         LogHelper.d(">> Configuration changed. reset!");
 
-        int type = TachoMeterType.getTachoMeterKey(cfgLoader.getMeterDeviceType());
-        if (localTachoMeterService != null && type != -1) {
-            localTachoMeterService.changeTachoMeterType(type);
-        }
-
-        if (localVacancyLightService != null) {
-            localVacancyLightService.launchService();
-        }
+        relaunchDeviceService();
 
         if (scenarioService != null) {
             scenarioService.reset();
@@ -340,18 +359,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void callOTAUpgrade() {
         LogHelper.write("#### Call OTA upgrade.");
         startService(new Intent("com.thinkware.florida.otaupdater.Updater"));
-        
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//        String today = sdf.format(Calendar.getInstance().getTime());
-//        String lastCalled = PreferenceUtil.getLastCalledOTA(this);
-//        LogHelper.d(">> today = " + today + ", lastCalled = " + lastCalled);
-//        if (TextUtils.isEmpty(lastCalled) || !today.equals(lastCalled)) {
-//            LogHelper.d(">> Call OTA upgrade.");
-//            startService(new Intent("com.thinkware.florida.otaupdater.Updater"));
-//        } else {
-//            LogHelper.d(">> Skip call OTA upgrade.");
-//        }
-//        PreferenceUtil.setLastCalledOTA(this, today);
     }
 
     private ServiceConnection scenarioConnection = new ServiceConnection() {
@@ -798,4 +805,70 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     }
+
+    /**
+     * USB Device가 붙었다 끊어지는 이슈가 있어서 감지한다.
+     */
+    private void registerUsbReceiver() {
+        LogHelper.write("#### registerUsbReceiver");
+        isAttachedUSB = isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID);
+        LogHelper.write("#### isAttachedUSB = " + isAttachedUSB);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        registerReceiver(usbReceiver, filter);
+    }
+
+    /**
+     * 빈차등 미터기 서비스를 재시작 한다.
+     */
+    private void relaunchDeviceService() {
+        LogHelper.write("#### relaunchDeviceService");
+        int type = TachoMeterType.getTachoMeterKey(cfgLoader.getMeterDeviceType());
+        if (localTachoMeterService != null && type != -1) {
+            localTachoMeterService.changeTachoMeterType(type);
+        }
+
+        if (localVacancyLightService != null) {
+            localVacancyLightService.launchService();
+        }
+    }
+
+    private boolean isAttachedUSB(int vendorId, int productId) {
+        UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+        if (deviceList != null) {
+            Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+            while (deviceIterator.hasNext()) {
+                UsbDevice device = deviceIterator.next();
+                if (device != null) {
+                    if (vendorId == device.getVendorId()
+                        && productId == device.getProductId()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private BroadcastReceiver usbReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            LogHelper.write("#### USB action = " + action);
+            LogHelper.write("#### isAttachedUSB = " + isAttachedUSB);
+
+            if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
+                if (!isAttachedUSB) {
+                    // USB 장치가 떨어져 있는 상태라면 다시 연결 한다.
+
+                    relaunchDeviceService();
+                    isAttachedUSB = isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID);
+                }
+            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+                isAttachedUSB = isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID);
+            }
+        }
+    };
 }

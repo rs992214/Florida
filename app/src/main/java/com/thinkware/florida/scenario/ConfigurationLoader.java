@@ -195,7 +195,12 @@ public class ConfigurationLoader {
         //  -> 모뎀 전화번호가 없을 경우 빈값("")을 서비스 인증 패킷에 올려보내도록 수정
         //  -> 디버그 화면 모뎀 ATCommand 추가 : AT+ICCID, AT$$DSCREEN?, AT+CPIN?
         //  -> 모뎀 재부팅시 모뎀 부팅 로그 저장하지 않도록 변경
-        configuration.programVersion = 202;
+        //  -> OTA 업그레이드 앱 실행할 때 마다 호출하도록 변경
+        //  -> 콜 방송창 타이머 완료 후 Activity 종료시 맵을 먼저 호출하고 Activity finish() 하도록 변경
+        // 203
+        //  -> 메시지창 종료 후 콜 메인창이 보여지는 이슈 수정
+        //  -> USB 장치 연결 Detach/Attach 시에 빈차등/미터기 서비스 재시작하도록 방어코드 추가
+        configuration.programVersion = 203;
     }
 
     private void loadFromSdCard(File f, Config configuration) {

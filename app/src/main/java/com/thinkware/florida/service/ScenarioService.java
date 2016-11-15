@@ -5,7 +5,9 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -92,6 +94,15 @@ public class ScenarioService extends Service {
     //----------------------------------------------------------------------------------------
     // fields
     //----------------------------------------------------------------------------------------
+    public static final int MSG_PERIOD = 1;
+    public static final int MSG_LIVE = 2;
+    public static final int MSG_EMERGENCY = 3;
+    public static final int MSG_AREA_CHECK = 4;
+    public static final int MSG_REPORT = 5;
+    public static final int MSG_ACK = 6;
+    public static final int MSG_SERVICE_ACK = 7;
+    public static final int MSG_DEVICE_WATCH = 8;
+
     private final IBinder binder = new ScenarioService.LocalBinder();
     private Context context;
     private NetworkManager networkManager;
@@ -102,9 +113,6 @@ public class ScenarioService extends Service {
     private Packets.EmergencyType emergencyType; // 긴급상황 상태
     private boolean hasCertification; // 서비스 인증 성공 여부
     private boolean isAvailableNetwork, isValidPort; // DebugWindow에 네트워크 상태, Port 상태를 표시하기 위함
-    private Timer timerPeriod, timerLive, timerEmergency, timerAreaCheck;
-    private Timer timerReport, timerAck, timerServiceAck;
-    private Timer timerDeviceWatch;
     private int reportRetryCount, ackRetryCount;
     // 전체 화면 Activity 팝업(공지사항, 메시지 등)이 보여질 때 이전 상태가 Background 였는지 저장 한다.
     // 이전 상태가 Background 였다면 MainActivity가 보여지지 않도록 아이나비를 한번 더 호출해 준다.
@@ -118,6 +126,7 @@ public class ScenarioService extends Service {
     private TachoMeterService serviceTachoMeter;
     private VacancyLightService serviceVacancyLight;
     private EmergencyService serviceEmergency;
+    private boolean isDestroyed;
 
     //----------------------------------------------------------------------------------------
     // life-cycle
@@ -151,7 +160,9 @@ public class ScenarioService extends Service {
 
         isAvailableNetwork = !networkManager.isAvailableNetwork(context);
         isValidPort = !isValidPort();
-        watchDevice();
+
+        isDestroyed = false;
+        pollingHandler.sendEmptyMessage(MSG_DEVICE_WATCH);
     }
 
     public class LocalBinder extends Binder {
@@ -250,18 +261,9 @@ public class ScenarioService extends Service {
     // method
     //----------------------------------------------------------------------------------------
     public void reset() {
-        if (timerPeriod != null) {
-            timerPeriod.cancel();
-            timerPeriod = null;
-        }
-        if (timerLive != null) {
-            timerLive.cancel();
-            timerLive = null;
-        }
-        if (timerEmergency != null) {
-            timerEmergency.cancel();
-            timerEmergency = null;
-        }
+        pollingHandler.removeMessages(MSG_PERIOD);
+        pollingHandler.removeMessages(MSG_LIVE);
+        pollingHandler.removeMessages(MSG_EMERGENCY);
 
         pollingCheckWaitRange(false);
 
@@ -339,7 +341,7 @@ public class ScenarioService extends Service {
             // 실제 Emergency Off는 서버에서 받아서 처리하도록 한다.
             // 디버깅 페이지에서 Emergency를 Off하는 경우를 위해 구현해 둔다.
             emergencyType = Packets.EmergencyType.End;
-            cancelTimer(timerEmergency);
+            pollingHandler.removeMessages(MSG_EMERGENCY);
 
             // 응급 상황 해제 후에 주기 전송을 재시작 한다.
             periodTerm = cfgLoader.getPst();
@@ -365,6 +367,18 @@ public class ScenarioService extends Service {
         }
         if (gpsHelper != null) {
             gpsHelper.destroy();
+        }
+
+        isDestroyed = true;
+        if (pollingHandler != null) {
+            pollingHandler.removeMessages(MSG_PERIOD);
+            pollingHandler.removeMessages(MSG_LIVE);
+            pollingHandler.removeMessages(MSG_EMERGENCY);
+            pollingHandler.removeMessages(MSG_AREA_CHECK);
+            pollingHandler.removeMessages(MSG_REPORT);
+            pollingHandler.removeMessages(MSG_ACK);
+            pollingHandler.removeMessages(MSG_SERVICE_ACK);
+            pollingHandler.removeMessages(MSG_DEVICE_WATCH);
         }
     }
 
@@ -483,50 +497,43 @@ public class ScenarioService extends Service {
     //----------------------------------------------------------------------------------------
     // Network & USB Port Watcher
     //----------------------------------------------------------------------------------------
-    private void watchDevice() {
-        cancelTimer(timerDeviceWatch);
-        timerDeviceWatch = new Timer();
-        timerDeviceWatch.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (!networkManager.isAvailableNetwork(context)) {
-                    if (isAvailableNetwork) {
-                        LogHelper.write("#### 네트워크 연결 끊김");
-                        if (BuildConfig.DEBUG) {
-                            Intent intent = new Intent(context, PopupActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("MSG", "통신 연결이 끊어졌습니다. 모뎀 상태를 확인해주세요.");
-                            context.startActivity(intent);
-                        }
-                    }
-                    isAvailableNetwork = false;
-                } else {
-                    if (!isAvailableNetwork) {
-                        LogHelper.write("#### 네트워크에 연결됨");
-                        ScenarioService svc = ((MainApplication) context.getApplicationContext()).getScenarioService();
-                        if (svc != null && svc.hasCertification()) {
-                            // 네트워크 연결이 끊어진 후 재접속시 휴식 패킷에 오류 보고를 한다.
-                            requestRest(Packets.RestType.ModemError);
-
-                            //saveModemLog(context);
-                        }
-                    }
-                    isAvailableNetwork = true;
-                }
-
-                if (!isValidPort()) {
-                    if (isValidPort) {
-                        LogHelper.write("#### 포트 목록 : " + getPortList());
-                    }
-                    isValidPort = false;
-                } else {
-                    if (!isValidPort) {
-                        LogHelper.write("#### 포트 목록 : " + getPortList());
-                    }
-                    isValidPort = true;
+    public void watchDevice() {
+        if (!networkManager.isAvailableNetwork(context)) {
+            if (isAvailableNetwork) {
+                LogHelper.write("#### 네트워크 연결 끊김");
+                if (BuildConfig.DEBUG) {
+                    Intent intent = new Intent(context, PopupActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("MSG", "통신 연결이 끊어졌습니다. 모뎀 상태를 확인해주세요.");
+                    context.startActivity(intent);
                 }
             }
-        }, 0, 1500);
+            isAvailableNetwork = false;
+        } else {
+            if (!isAvailableNetwork) {
+                LogHelper.write("#### 네트워크에 연결됨");
+                ScenarioService svc = ((MainApplication) context.getApplicationContext()).getScenarioService();
+                if (svc != null && svc.hasCertification()) {
+                    // 네트워크 연결이 끊어진 후 재접속시 휴식 패킷에 오류 보고를 한다.
+                    requestRest(Packets.RestType.ModemError);
+
+                    //saveModemLog(context);
+                }
+            }
+            isAvailableNetwork = true;
+        }
+
+        if (!isValidPort()) {
+            if (isValidPort) {
+                LogHelper.write("#### 포트 목록 : " + getPortList());
+            }
+            isValidPort = false;
+        } else {
+            if (!isValidPort) {
+                LogHelper.write("#### 포트 목록 : " + getPortList());
+            }
+            isValidPort = true;
+        }
     }
 
     private boolean isValidPort() {
@@ -629,15 +636,8 @@ public class ScenarioService extends Service {
         networkManager.request(context, packet);
 
         // 마지막으로 요청 된 리퀘스트 이후 일정 시간 부터 라이브 전송 한다.
-        cancelTimer(timerLive);
-        TimerTask ttLive = new TimerTask() {
-            @Override
-            public void run() {
-                requestLive();
-            }
-        };
-        timerLive = new Timer();
-        timerLive.schedule(ttLive, cfgLoader.getRt() * 1000);
+        pollingHandler.removeMessages(MSG_LIVE);
+        pollingHandler.sendEmptyMessageDelayed(MSG_LIVE, cfgLoader.getRt() * 1000);
     }
 
     /**
@@ -646,25 +646,19 @@ public class ScenarioService extends Service {
     public void requestAck(final int messageType, final int serviceNo, final int callNo) {
         ackRetryCount = 0;
 
-        cancelTimer(timerAck);
-        timerAck = new Timer();
-        timerAck.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (ackRetryCount >= 3) {
-                    cancelTimer(timerAck);
-                } else {
-                    AckPacket packet = new AckPacket();
-                    packet.setServiceNumber(serviceNo);
-                    packet.setCorporationCode(cfgLoader.getCorportaionCode());
-                    packet.setCarId(cfgLoader.getCarId());
-                    packet.setAckMessage(messageType);
-                    packet.setParameter(callNo);
-                    request(packet);
-                }
-                ackRetryCount++;
-            }
-        }, 0, 5 * 1000);
+        AckPacket packet = new AckPacket();
+        packet.setServiceNumber(serviceNo);
+        packet.setCorporationCode(cfgLoader.getCorportaionCode());
+        packet.setCarId(cfgLoader.getCarId());
+        packet.setAckMessage(messageType);
+        packet.setParameter(callNo);
+
+        Message msg = pollingHandler.obtainMessage();
+        msg.what = MSG_ACK;
+        msg.obj = packet;
+
+        pollingHandler.removeMessages(MSG_ACK);
+        pollingHandler.sendMessage(msg);
     }
 
     /**
@@ -682,21 +676,9 @@ public class ScenarioService extends Service {
         packet.setModemNumber(TextUtils.isEmpty(modemNumber) ? "" : modemNumber); // 단말의 실제 전화 번호
         request(packet);
 
-        cancelTimer(timerServiceAck);
+        pollingHandler.removeMessages(MSG_SERVICE_ACK);
         if (withTimer) {
-            timerServiceAck = new Timer();
-            timerServiceAck.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    LogHelper.d(">> Failed to certify in 3 sec.");
-                    WavResourcePlayer.getInstance(context).play(R.raw.voice_103);
-                    Fragment f = FragmentUtil.getTopFragment(supportFragmentManager);
-                    if (f != null && f instanceof ServiceStatusFragment) {
-                        ((ServiceStatusFragment) f).showErrorMessage(
-                                context.getString(R.string.fail_connect_server));
-                    }
-                }
-            }, 3 * 1000);
+            pollingHandler.sendEmptyMessageDelayed(MSG_SERVICE_ACK, 3000);
         }
     }
 
@@ -814,40 +796,31 @@ public class ScenarioService extends Service {
                               final int fare, final int mileage) {
         reportRetryCount = 0;
 
-        cancelTimer(timerReport);
-        timerReport = new Timer();
-        timerReport.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (reportRetryCount >= 3) {
-                    cancelTimer(timerReport);
-                    if (kind == Packets.ReportKind.Failed) {
-                        refreshSavedPassengerInfo(callNo);
-                    }
-                } else {
-                    ServiceReportPacket packet = new ServiceReportPacket();
-                    packet.setServiceNumber(cfgLoader.getServiceNumber());
-                    packet.setCorporationCode(cfgLoader.getCorportaionCode());
-                    packet.setCarId(cfgLoader.getCarId());
-                    packet.setPhoneNumber(cfgLoader.getDriverPhoneNumber());
-                    packet.setCallNumber(callNo);
-                    packet.setOrderCount(orderCount);
-                    packet.setOrderKind(orderKind);
-                    packet.setCallReceiptDate(callDate);
-                    packet.setReportKind(kind);
-                    packet.setGpsTime(gpsHelper.getTime());
-                    packet.setDirection(gpsHelper.getBearing());
-                    packet.setLongitude(gpsHelper.getLongitude());
-                    packet.setLatitude(gpsHelper.getLatitude());
-                    packet.setSpeed(gpsHelper.getSpeed());
-                    packet.setTaxiState(boardType);
-                    packet.setFare(fare);
-                    packet.setDistance(mileage);
-                    request(packet);
-                }
-                reportRetryCount++;
-            }
-        }, 0, 5 * 1000);
+        ServiceReportPacket packet = new ServiceReportPacket();
+        packet.setServiceNumber(cfgLoader.getServiceNumber());
+        packet.setCorporationCode(cfgLoader.getCorportaionCode());
+        packet.setCarId(cfgLoader.getCarId());
+        packet.setPhoneNumber(cfgLoader.getDriverPhoneNumber());
+        packet.setCallNumber(callNo);
+        packet.setOrderCount(orderCount);
+        packet.setOrderKind(orderKind);
+        packet.setCallReceiptDate(callDate);
+        packet.setReportKind(kind);
+        packet.setGpsTime(gpsHelper.getTime());
+        packet.setDirection(gpsHelper.getBearing());
+        packet.setLongitude(gpsHelper.getLongitude());
+        packet.setLatitude(gpsHelper.getLatitude());
+        packet.setSpeed(gpsHelper.getSpeed());
+        packet.setTaxiState(boardType);
+        packet.setFare(fare);
+        packet.setDistance(mileage);
+
+        Message msg = pollingHandler.obtainMessage();
+        msg.what = MSG_REPORT;
+        msg.obj = packet;
+
+        pollingHandler.removeMessages(MSG_REPORT);
+        pollingHandler.sendMessage(msg);
     }
 
     /**
@@ -995,34 +968,24 @@ public class ScenarioService extends Service {
      */
     private void pollingPeriod(int period) {
         LogHelper.d(">> Polling period : " + period + " sec");
-        cancelTimer(timerPeriod);
-        TimerTask ttPeriod = new TimerTask() {
-            @Override
-            public void run() {
-                requestPeriod();
-            }
-        };
-        timerPeriod = new Timer();
-        timerPeriod.schedule(ttPeriod, 0, period * 1000);
+        pollingHandler.removeMessages(MSG_PERIOD);
+
+        Message msg = pollingHandler.obtainMessage();
+        msg.what = MSG_PERIOD;
+        msg.arg1 = period;
+
+        pollingHandler.sendMessage(msg);
     }
 
     /**
      * Emergency 요청 패킷을 일정 간격마다 요청 한다.
      */
     public void pollingEmergency() {
-        cancelTimer(timerEmergency);
-
-        TimerTask tt = new TimerTask() {
-            @Override
-            public void run() {
-                requestEmergency();
-            }
-        };
-        timerEmergency = new Timer();
-        timerEmergency.schedule(tt, 0, cfgLoader.getEmergencyPeriodTime() * 1000);
+        pollingHandler.removeMessages(MSG_EMERGENCY);
+        pollingHandler.sendEmptyMessage(MSG_EMERGENCY);
 
         // 응급 상황에서는 주기를 올리지 않아야 한다.
-        cancelTimer(timerPeriod);
+        pollingHandler.removeMessages(MSG_PERIOD);
     }
 
     /**
@@ -1030,30 +993,10 @@ public class ScenarioService extends Service {
      */
     private void pollingCheckWaitRange(boolean start) {
         // 범위를 벗어 난 상태에서 speed 5 이상이면 대기 취소를 요청 할 것 (5초 주기로 체크)
-        cancelTimer(timerAreaCheck);
-        if (!start) {
-            return;
+        pollingHandler.removeMessages(MSG_AREA_CHECK);
+        if (start) {
+            pollingHandler.sendEmptyMessage(MSG_AREA_CHECK);
         }
-
-        TimerTask tt = new TimerTask() {
-            @Override
-            public void run() {
-                LogHelper.d(">> Wait Area : Search");
-                ResponseWaitDecisionPacket p = PreferenceUtil.getWaitArea(context);
-                LogHelper.d(">> Wait Area : Speed -> " + gpsHelper.getSpeed());
-                if (p != null && gpsHelper.getSpeed() > 5) {
-                    float distance = getDistance(p.getLatitude(), p.getLongitude());
-                    LogHelper.d(">> Wait Area : distance -> " + distance + ". range -> " + p.getWaitRange());
-                    if (distance > p.getWaitRange()) {
-                        LogHelper.d(">> Wait Area : Out of area");
-                        cancelTimer(timerAreaCheck);
-                        requestWaitCancel(p.getWaitPlaceCode());
-                    }
-                }
-            }
-        };
-        timerAreaCheck = new Timer();
-        timerAreaCheck.schedule(tt, 0, 5 * 1000);
     }
 
     //----------------------------------------------------------------------------------------
@@ -1087,7 +1030,7 @@ public class ScenarioService extends Service {
             }
             switch (messageType) {
                 case Packets.SERVICE_REQUEST_RESULT: { // 서비스 요청 응답
-                    cancelTimer(timerServiceAck);
+                    pollingHandler.removeMessages(MSG_SERVICE_ACK);
 
                     ServiceRequestResultPacket p = (ServiceRequestResultPacket) response;
 
@@ -1304,7 +1247,7 @@ public class ScenarioService extends Service {
                 }
                 break;
                 case Packets.RESPONSE_SERVICE_REPORT: { // 운행보고 응답
-                    cancelTimer(timerReport);
+                    pollingHandler.removeMessages(MSG_REPORT);
 
                     ResponseServiceReportPacket packet = (ResponseServiceReportPacket) response;
                     Packets.ReportKind reportKind = packet.getReportKind();
@@ -1461,7 +1404,7 @@ public class ScenarioService extends Service {
                 }
                 break;
                 case Packets.RESPONSE_ACK: // 접속종료 (ACK의 응답)
-                    cancelTimer(timerAck);
+                    pollingHandler.removeMessages(MSG_ACK);
                     break;
                 case Packets.CALLER_INFO_RESEND: { // 고객정보재전송 응답
                     CallerInfoResendPacket p = (CallerInfoResendPacket) response;
@@ -1549,7 +1492,8 @@ public class ScenarioService extends Service {
                 break;
                 case Packets.CANCEL_EMERGENCY: { // Emergency 응답
                     emergencyType = Packets.EmergencyType.End;
-                    cancelTimer(timerEmergency);
+                    pollingHandler.removeMessages(MSG_EMERGENCY);
+
                     if (serviceEmergency != null) {
                         serviceEmergency.setEmergencyOff();
                     }
@@ -1580,4 +1524,97 @@ public class ScenarioService extends Service {
             }
         }
     };
+
+    //----------------------------------------------------------------------------------------
+    // polling & timer
+    //----------------------------------------------------------------------------------------
+    private Handler pollingHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (isDestroyed) {
+                return;
+            }
+
+            switch (msg.what) {
+                case MSG_PERIOD:
+                    requestPeriod();
+                    int period = msg.arg1;
+
+                    Message msgNew = obtainMessage();
+                    msgNew.what = MSG_PERIOD;
+                    msgNew.arg1 = period;
+                    sendMessageDelayed(msgNew, period * 1000);
+                    break;
+                case MSG_LIVE:
+                    requestLive();
+                    pollingHandler.sendEmptyMessageDelayed(MSG_LIVE, cfgLoader.getRt() * 1000);
+                    break;
+                case MSG_EMERGENCY:
+                    requestEmergency();
+                    sendEmptyMessageDelayed(MSG_EMERGENCY, cfgLoader.getEmergencyPeriodTime() * 1000);
+                    break;
+                case MSG_AREA_CHECK:
+                    LogHelper.d(">> Wait Area : Search");
+                    ResponseWaitDecisionPacket p = PreferenceUtil.getWaitArea(context);
+                    LogHelper.d(">> Wait Area : Speed -> " + gpsHelper.getSpeed());
+                    if (p != null && gpsHelper.getSpeed() > 5) {
+                        float distance = getDistance(p.getLatitude(), p.getLongitude());
+                        LogHelper.d(">> Wait Area : distance -> " + distance + ". range -> " + p.getWaitRange());
+                        if (distance > p.getWaitRange()) {
+                            LogHelper.d(">> Wait Area : Out of area");
+                            removeMessages(MSG_AREA_CHECK);
+                            requestWaitCancel(p.getWaitPlaceCode());
+                            return;
+                        }
+                    }
+                    sendEmptyMessageDelayed(MSG_AREA_CHECK, 5000);
+                    break;
+                case MSG_REPORT:
+                    ServiceReportPacket sp = (ServiceReportPacket) msg.obj;
+                    if (reportRetryCount >= 3) {
+                        if (sp.getReportKind() == Packets.ReportKind.Failed) {
+                            refreshSavedPassengerInfo(sp.getCallNumber());
+                        }
+                        removeMessages(MSG_REPORT);
+                    } else {
+                        request(sp);
+                        reportRetryCount++;
+
+                        Message newMsg = obtainMessage();
+                        newMsg.what = MSG_REPORT;
+                        newMsg.obj = sp;
+                        sendMessageDelayed(newMsg, 5000);
+                    }
+                    break;
+                case MSG_ACK:
+                    if (ackRetryCount >= 3) {
+                        removeMessages(MSG_ACK);
+                    } else {
+                        AckPacket packet = (AckPacket) msg.obj;
+                        request(packet);
+                        ackRetryCount++;
+
+                        Message newMsg = obtainMessage();
+                        newMsg.what = MSG_ACK;
+                        newMsg.obj = packet;
+                        sendMessageDelayed(newMsg, 5000);
+                    }
+                    break;
+                case MSG_SERVICE_ACK:
+                    LogHelper.d(">> Failed to certify in 3 sec.");
+                    WavResourcePlayer.getInstance(context).play(R.raw.voice_103);
+                    Fragment f = FragmentUtil.getTopFragment(supportFragmentManager);
+                    if (f != null && f instanceof ServiceStatusFragment) {
+                        ((ServiceStatusFragment) f).showErrorMessage(
+                                context.getString(R.string.fail_connect_server));
+                    }
+                    break;
+                case MSG_DEVICE_WATCH:
+                    watchDevice();
+                    sendEmptyMessageDelayed(MSG_DEVICE_WATCH, 1500);
+                    break;
+            }
+        }
+    };
+
 }

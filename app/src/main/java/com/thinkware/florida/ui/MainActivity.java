@@ -76,9 +76,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Packets.BoardType boardType = Packets.BoardType.Empty;
     private int debugCount;
     private boolean isAttachedUSB;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mContext = this;
         LogHelper.d("++ MainActivity.onCreate(savedInstanceState)");
         super.onCreate(savedInstanceState);
 
@@ -125,6 +127,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             t.schedule(new TimerTask() {
                 @Override
                 public void run() {
+                    //네트워크 상태를 12번 확인한다.
+                    for(int i = 0; i < 12 ; i++) {
+                        if(mContext != null && NetworkManager.getInstance().isAvailableNetwork(mContext)){
+                            break;
+                        }
+
+                        try {
+                            Thread.sleep(5*1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
                     callOTAUpgrade();
                 }
             }, 30 * 1000);

@@ -88,7 +88,7 @@ public class INaviExecutor {
 
     // 아이나비 실행 함수 예제
     private static void startInavi(Context context) {
-        if (isINaviRunning()) {
+        if (isINaviRunning(context)) {
             // 아이나비 실행된 상태
             Intent intent = new Intent();
             intent.setAction("com.thinkware.sundo.inavi3d.action.ExtCommand");
@@ -104,7 +104,7 @@ public class INaviExecutor {
     // 아이나비 실행 여부 체크 함수 예제
     private static boolean isINaviRunning(Context context) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) { // 11
-            final ActivityManager activityManager =(ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+            final ActivityManager activityManager =(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
             final List<ActivityManager.RecentTaskInfo> recentTasks = activityManager.getRecentTasks(Integer.MAX_VALUE, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
 
             ActivityManager.RecentTaskInfo recentTaskInfo = null;

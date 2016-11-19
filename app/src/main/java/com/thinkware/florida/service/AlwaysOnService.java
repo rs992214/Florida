@@ -1,5 +1,6 @@
 package com.thinkware.florida.service;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -77,8 +78,10 @@ public class AlwaysOnService extends Service implements View.OnTouchListener, Vi
                 case MSG_WATCH_PROCESS:
                     // 지도뷰 위에서만 아이콘이 보여지도록 처리
                     if (statusView != null) {
+                        int systemUIVisibility = ((MainApplication) getApplication()).getTopActivity().getWindow().getDecorView().getSystemUiVisibility();
                         // 아이나비 Map Activity : com.thinkware.sundo.inavi3d.INavi3DActivity
-                        if (((MainApplication) getApplication()).isForegroundActivity("INavi3DActivity")) {
+                        if (((MainApplication) getApplication()).isForegroundActivity("INavi3DActivity")
+                                && (systemUIVisibility != View.SYSTEM_UI_FLAG_VISIBLE)) {
                             if (statusView.getVisibility() == View.GONE) {
                                 statusView.setVisibility(View.VISIBLE);
                             }

@@ -4,4 +4,4 @@ app/build/
 .gradle/
 .idea/
 *.iml
-
+captures/

@@ -1,6 +1,7 @@
 package com.thinkware.florida.service;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,11 +9,15 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.hardware.display.DisplayManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +44,8 @@ import com.thinkware.florida.ui.MainApplication;
 import com.thinkware.florida.ui.view.CallStatusView;
 import com.thinkware.florida.utility.log.LogHelper;
 
+import java.util.List;
+
 
 /**
  * Created by Mihoe on 2016-09-08.
@@ -61,6 +68,7 @@ public class AlwaysOnService extends Service implements View.OnTouchListener, Vi
     private final int touchSlop = 10;
     private ConfigurationLoader cfgLoader;
     private ScenarioService scenarioService;
+    private Rect windowVisibleDisplayFrame;
 
     private Handler handler = new Handler() {
         @Override
@@ -77,16 +85,38 @@ public class AlwaysOnService extends Service implements View.OnTouchListener, Vi
                     break;
                 case MSG_WATCH_PROCESS:
                     // 지도뷰 위에서만 아이콘이 보여지도록 처리
+                    // 아이나비 Map Activity : com.thinkware.sundo.inavi3d.INavi3DActivity
+                    // status bar 없는 화면에서만 보여지도록 조건 추가.
+                    // --> Screen Size는 800x480으로 가정한다.
                     if (statusView != null) {
-                        int systemUIVisibility = ((MainApplication) getApplication()).getTopActivity().getWindow().getDecorView().getSystemUiVisibility();
-                        // 아이나비 Map Activity : com.thinkware.sundo.inavi3d.INavi3DActivity
-                        if (((MainApplication) getApplication()).isForegroundActivity("INavi3DActivity")
-                                && (systemUIVisibility != View.SYSTEM_UI_FLAG_VISIBLE)) {
-                            if (statusView.getVisibility() == View.GONE) {
-                                statusView.setVisibility(View.VISIBLE);
+
+
+                        if (((MainApplication) getApplication()).isForegroundActivity("INavi3DActivity")){
+                            if(windowVisibleDisplayFrame == null) {
+                                windowVisibleDisplayFrame = new Rect();
+                            }
+
+                            if(statusView.getVisibility() == View.GONE) {
+                                statusView.setVisibility(View.INVISIBLE);
+                                statusView.invalidate();
+                                sendEmptyMessageDelayed(MSG_WATCH_PROCESS, 500);
+                                break;
+                            }
+
+                            statusView.getWindowVisibleDisplayFrame(windowVisibleDisplayFrame);
+                            int h = windowVisibleDisplayFrame.height();
+                            if(h == 480) {
+                                //480이 아니면 status bar가 보이는 상태라고 판단한다.
+                                if (statusView.getVisibility() != View.VISIBLE) {
+                                    statusView.setVisibility(View.VISIBLE);
+                                }
+                            } else {
+                                if (statusView.getVisibility() != View.GONE) {
+                                    statusView.setVisibility(View.GONE);
+                                }
                             }
                         } else {
-                            if (statusView.getVisibility() == View.VISIBLE) {
+                            if (statusView.getVisibility() != View.GONE) {
                                 statusView.setVisibility(View.GONE);
                             }
                         }

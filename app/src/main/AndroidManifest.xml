@@ -29,7 +29,6 @@
             android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,13 +36,27 @@
         <service android:name=".service.AlwaysOnService" />
         <service android:name=".service.ScenarioService" />
 
-        <activity android:name=".ui.MessagePopupActivity" />
-        <activity android:name=".ui.NoticePopupActivity" />
-        <activity android:name=".ui.PassengerInfoPopupActivity" />
-        <activity android:name=".ui.RequestOrderPopupActivity" />
+        <activity
+            android:taskAffinity=""
+            android:name=".ui.MessagePopupActivity" />
+        <activity
+            android:taskAffinity=""
+            android:name=".ui.NoticePopupActivity" />
+        <activity
+            android:taskAffinity=""
+            android:name=".ui.PassengerInfoPopupActivity" />
+        <activity
+            android:taskAffinity=""
+            android:name=".ui.RequestOrderPopupActivity" />
+
+        <activity
+            android:taskAffinity=""
+            android:name=".ui.PopupActivity" />
+        <activity
+            android:taskAffinity=""
+            android:name=".ui.TestActivity" />
+
         <activity android:name=".ui.ConfigActivity" />
-        <activity android:name=".ui.PopupActivity" />
-        <activity android:name=".ui.TestActivity" />
 
         <receiver
             android:name=".scenario.FloridaBroadcastReceiver"

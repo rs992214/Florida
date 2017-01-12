@@ -116,7 +116,7 @@ public class ScenarioService extends Service {
     private int reportRetryCount, ackRetryCount;
     // 전체 화면 Activity 팝업(공지사항, 메시지 등)이 보여질 때 이전 상태가 Background 였는지 저장 한다.
     // 이전 상태가 Background 였다면 MainActivity가 보여지지 않도록 아이나비를 한번 더 호출해 준다.
-    private boolean isPrevStatusBackground;
+    //private boolean isPrevStatusBackground;
     private String modemNumber;
     // 모바일 배차를 받고 승차보고가 올라가기 전까지는 주기 전송 시간을 cfgLoader.getRc()로 한다.
     // 모바일 배차 승차보고 후 주기 시간을 정상적으로 되돌리기 위해 사용 한다
@@ -241,13 +241,13 @@ public class ScenarioService extends Service {
         return emergencyType;
     }
 
-    public boolean isPrevStatusBackground() {
-        return isPrevStatusBackground;
-    }
+//    public boolean isPrevStatusBackground() {
+//        return isPrevStatusBackground;
+//    }
 
-    public void setPrevStatusBackground(boolean status) {
-        isPrevStatusBackground = status;
-    }
+//    public void setPrevStatusBackground(boolean status) {
+//        isPrevStatusBackground = status;
+//    }
 
     public String getModemNumber() {
         return modemNumber;
@@ -461,13 +461,13 @@ public class ScenarioService extends Service {
         // 위의 이슈로 메시지 창을 닫았을 때 MainActivity가 onResume 된다.
         // 콜 메인 화면 대신 지도 화면을 보여주기 위해서 현재 최상위 Activity가 MainActivity일 경우에만
         // background/foreground FLAG를 저장해 두었다가 BaseActivity.finishWithINavi()에서 이를 보고 지도를 실행하도록 한다.
-        Activity topAct = ((MainApplication) getApplication()).getTopActivity();
-        if (topAct != null && topAct.getClass().getSimpleName().contains("MainActivity")) {
-            isPrevStatusBackground = !((MainApplication) getApplication()).isForegroundActivity(getPackageName());
-            LogHelper.write("#### isPrevStatusBackground = " + isPrevStatusBackground);
-        } else {
-            LogHelper.write("#### isPrevStatusBackground = " + (topAct == null ? "null" : topAct.getClass().getName()));
-        }
+//        Activity topAct = ((MainApplication) getApplication()).getTopActivity();
+//        if (topAct != null && topAct.getClass().getSimpleName().contains("MainActivity")) {
+//            isPrevStatusBackground = !((MainApplication) getApplication()).isForegroundActivity(getPackageName());
+//            LogHelper.write("#### isPrevStatusBackground = " + isPrevStatusBackground);
+//        } else {
+//            LogHelper.write("#### isPrevStatusBackground = " + (topAct == null ? "null" : topAct.getClass().getName()));
+//        }
         Intent intent = new Intent(ScenarioService.this, cls);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

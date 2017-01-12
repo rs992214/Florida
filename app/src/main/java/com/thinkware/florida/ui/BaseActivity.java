@@ -43,7 +43,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void finishWithINavi() {
-        Activity belowAct = ((MainApplication) getApplication()).getBelowActivity();
+        /*Activity belowAct = ((MainApplication) getApplication()).getBelowActivity();
         // 최상위 Activity는 지금 보여지고 있는 창(메시지, 공지사항, 콜방송, 고객정보) 이므로
         // 바로 아래 Activity가 MainActivity일 경우를 체크 한다.
         if (belowAct != null && belowAct.getClass().getSimpleName().contains("MainActivity")) {
@@ -53,7 +53,9 @@ public class BaseActivity extends AppCompatActivity {
                 service.setPrevStatusBackground(false);
                 INaviExecutor.run(this);
             }
-        }
+        }*/
+
+        INaviExecutor.run(this);
 
         Timer t = new Timer();
         t.schedule(new TimerTask() {

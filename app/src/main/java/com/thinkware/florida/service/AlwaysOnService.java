@@ -226,6 +226,7 @@ public class AlwaysOnService extends Service implements View.OnTouchListener, Vi
 
         saveLastPosition();
         windowManager.removeView(statusView);
+        windowManager.removeView(topLeftView);
         unbindCallbackServices();
 
         handler.removeMessages(MSG_WATCH_PROCESS);

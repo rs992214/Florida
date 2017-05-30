@@ -37,6 +37,11 @@
         <activity
             android:taskAffinity=""
             android:theme="@style/FullscreenTheme"
+            android:name=".ui.WaitStateActivity" />
+
+        <activity
+            android:taskAffinity=""
+            android:theme="@style/FullscreenTheme"
             android:name=".ui.MessagePopupActivity" />
         <activity
             android:taskAffinity=""

@@ -44,7 +44,7 @@ public class ServiceStatusFragment extends BaseFragment {
     int modemInitializeCount;
 
     //---------------------------------------------------------------------------------------------
-    // contructor
+    // constructor
     //---------------------------------------------------------------------------------------------
     public ServiceStatusFragment() {
         // Required empty public constructor

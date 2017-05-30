@@ -49,6 +49,7 @@ import com.thinkware.florida.ui.fragment.QueryCallNumFragment;
 import com.thinkware.florida.ui.fragment.ServiceManagementFragment;
 import com.thinkware.florida.ui.fragment.ServiceStatusFragment;
 import com.thinkware.florida.ui.fragment.WaitCallFragment;
+import com.thinkware.florida.ui.fragment.ManageWaitCallFragment;
 import com.thinkware.florida.utility.log.LogHelper;
 
 import java.util.HashMap;
@@ -67,7 +68,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final int USB_VENDOR_ID = 1250;
     private static final int USB_PRODUCT_ID = 5140;
 
-    View menuService, menuQueryCall, menuReqWait, menuCallerInfo, menuNotice, menuMessage, menuConfig, menuExit;
+    View menuService, menuQueryCall, menuCallerInfo, menuNotice, menuMessage, menuConfig, menuExit;
+    View menuManWait, menuReqWait;
+
     TextView txtCorpInfo, txtVersionInfo;
 
     private ConfigurationLoader cfgLoader;
@@ -85,11 +88,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         LogHelper.write("#### Application 시작.");
-        setContentView(R.layout.activity_main);
+        int serviceNumber = ConfigurationLoader.getInstance().getServiceNumber();
+        if(serviceNumber == 3) { //하남
+            setContentView(R.layout.activity_main_hanam);
+            menuManWait = findViewById(R.id.menu_manwait);
+            menuManWait.setOnClickListener(this);
+        } else {
+            setContentView(R.layout.activity_main);
+            menuReqWait = findViewById(R.id.menu_reqwait);
+            menuReqWait.setOnClickListener(this);
+        }
 
         menuService = findViewById(R.id.menu_servicemanage);
         menuQueryCall = findViewById(R.id.menu_querycallnum);
-        menuReqWait = findViewById(R.id.menu_reqwait);
         menuCallerInfo = findViewById(R.id.menu_callerinfo);
         menuNotice = findViewById(R.id.menu_notice);
         menuMessage = findViewById(R.id.menu_message);
@@ -98,7 +109,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         menuService.setOnClickListener(this);
         menuQueryCall.setOnClickListener(this);
-        menuReqWait.setOnClickListener(this);
         menuCallerInfo.setOnClickListener(this);
         menuNotice.setOnClickListener(this);
         menuMessage.setOnClickListener(this);
@@ -193,11 +203,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     return;
                 }
             } else {
+                /*
                 SingleLineDialog dialog = new SingleLineDialog(this,
                         getString(R.string.done),
                         getString(R.string.need_certify));
                 dialog.show();
-                return;
+                return;*/
             }
         }
         switch (resId) {
@@ -213,6 +224,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 FragmentUtil.replace(getSupportFragmentManager(), new QueryCallNumFragment());
                 break;
             }
+            case R.id.menu_manwait:
+                FragmentUtil.replace(getSupportFragmentManager(), new ManageWaitCallFragment());
+                break;
+
             case R.id.menu_reqwait: {
                 // 승차중 또는 저장된 배차 정보가 있을 경우 대기 요청을 할 수 없다.
                 if (scenarioService.getBoardType() == Packets.BoardType.Boarding

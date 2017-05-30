@@ -67,9 +67,14 @@ public class RequestOrderFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 PreferenceUtil.clearTempCallInfo(getActivity());
+
                 if (tempPacket != null) {
                     getScenarioService().requestOrderRealtime(Packets.OrderDecisionType.Reject, tempPacket);
                 }
+
+                //대기콜인 경우 거절하면 대기 상태 해제 한다. 그리고, 아이나비 화면으로 가기 때문에 부작용 없다고 생각한다.
+                PreferenceUtil.clearWaitArea(getActivity());
+
                 if (getActivity() instanceof RequestOrderPopupActivity) {
                     ((RequestOrderPopupActivity)getActivity()).finishWithINavi();
                 }
@@ -92,6 +97,10 @@ public class RequestOrderFragment extends BaseFragment {
                 if (tempPacket != null) {
                     getScenarioService().requestOrderRealtime(Packets.OrderDecisionType.Reject, tempPacket);
                 }
+
+                //대기콜인 경우 거절하면 대기 상태 해제 한다. 그리고, 아이나비 화면으로 가기 때문에 부작용 없다고 생각한다.
+                PreferenceUtil.clearWaitArea(getActivity());
+
                 if (getActivity() instanceof RequestOrderPopupActivity) {
                     ((RequestOrderPopupActivity)getActivity()).finishWithINavi();
                 }

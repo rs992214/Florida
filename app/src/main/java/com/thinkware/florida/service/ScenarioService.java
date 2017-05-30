@@ -1337,6 +1337,13 @@ public class ScenarioService extends Service {
                             && packet.getOrderKind() == Packets.OrderKind.Normal) {
                         // - 0x0C : 대기배차 상태인데 일반콜 수신될 경우
                         requestOrderRealtime(Packets.OrderDecisionType.Waiting, packet);
+                    } else if (PreferenceUtil.getWaitArea(context) != null
+                            && packet.getOrderKind() == Packets.OrderKind.WaitOrderTwoWay) {
+                        // 대기배차 상태인데 양방향 대기배차 수신될 경우 (하남사용)
+                        WavResourcePlayer.getInstance(context).play(R.raw.voice_160_116);
+                        PreferenceUtil.setTempCallInfo(context, packet);
+                        //showRequestOrderPopupActivity(packet);
+                        showRequestOrderPopupActivity();
                     } else {
                         WavResourcePlayer.getInstance(context).play(R.raw.voice_160_116);
                         PreferenceUtil.setTempCallInfo(context, packet);
@@ -1367,6 +1374,11 @@ public class ScenarioService extends Service {
                         } else {
                             isFailed = false;
                         }
+                    }
+
+                    if (tempPacket.getOrderKind() == Packets.OrderKind.WaitOrderTwoWay) {
+                        //대기콜(하남)인 경우, 배차 처리되면 대기 상태 해제 한다. 그리고, 아이나비 화면으로 가기 때문에 부작용 없다고 생각한다.
+                        PreferenceUtil.clearWaitArea(context);
                     }
 
                     if (isFailed) {

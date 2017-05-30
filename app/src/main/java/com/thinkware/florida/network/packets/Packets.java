@@ -180,11 +180,11 @@ public class Packets {
     public enum OrderKind {
         Normal(1), // 일반배차(양방향경쟁)
         Wait(3), // 대기배차 (SMS)
-        Forced(05), // 강제배차
+        Forced(05), // 강제배차, 지정배차 (복지콜 사용)
         Manual(6), // 수동배차, 지정배차
-        WaitOrder(7), // 대기배차
+        WaitOrder(7), // 대기배차 SMS (하남 이외 지역 사용)
         GetOnOrder(10), // 승차중 배차
-        WaitOrderTwoWay(11), // 양방향 대기배차
+        WaitOrderTwoWay(11), // 양방향 대기배차, 선택 대기배차 (하남사용)
         Mobile(15); // 모바일배차
 
         public int value;

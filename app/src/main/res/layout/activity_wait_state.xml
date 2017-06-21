@@ -16,4 +16,23 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
+    <ListView
+        android:id="@+id/list_state0"
+        android:layout_width="345dp"
+        android:layout_height="360dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/btn_close_x"
+        android:layout_alignParentStart="true" />
+
+    <ListView
+        android:id="@+id/list_state1"
+        android:layout_width="345dp"
+        android:layout_height="360dp"
+        android:layout_marginStart="420dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/btn_close_x"
+        android:layout_alignParentStart="true" />
+
+
 </RelativeLayout>

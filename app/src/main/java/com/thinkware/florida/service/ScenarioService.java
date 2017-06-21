@@ -39,6 +39,7 @@ import com.thinkware.florida.network.packets.mdt2server.RequestOrderRealtimePack
 import com.thinkware.florida.network.packets.mdt2server.RequestRestPacket;
 import com.thinkware.florida.network.packets.mdt2server.RequestServicePacket;
 import com.thinkware.florida.network.packets.mdt2server.RequestWaitAreaPacket;
+import com.thinkware.florida.network.packets.mdt2server.RequestWaitAreaStatePacket;
 import com.thinkware.florida.network.packets.mdt2server.ServiceReportPacket;
 import com.thinkware.florida.network.packets.mdt2server.WaitCancelPacket;
 import com.thinkware.florida.network.packets.mdt2server.WaitDecisionPacket;
@@ -51,6 +52,7 @@ import com.thinkware.florida.network.packets.server2mdt.ResponseMessagePacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponsePeriodSendingPacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponseRestPacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponseServiceReportPacket;
+import com.thinkware.florida.network.packets.server2mdt.ResponseWaitAreaStatePacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponseWaitDecisionPacket;
 import com.thinkware.florida.network.packets.server2mdt.ServiceConfigPacket;
 import com.thinkware.florida.network.packets.server2mdt.ServiceRequestResultPacket;
@@ -68,6 +70,7 @@ import com.thinkware.florida.ui.PassengerInfoPopupActivity;
 import com.thinkware.florida.ui.PopupActivity;
 import com.thinkware.florida.ui.RequestOrderPopupActivity;
 import com.thinkware.florida.ui.TestActivity;
+import com.thinkware.florida.ui.WaitStateActivity;
 import com.thinkware.florida.ui.fragment.FragmentUtil;
 import com.thinkware.florida.ui.fragment.MessageListFragment;
 import com.thinkware.florida.ui.fragment.PassengerInfoFragment;
@@ -102,6 +105,7 @@ public class ScenarioService extends Service {
     public static final int MSG_ACK = 6;
     public static final int MSG_SERVICE_ACK = 7;
     public static final int MSG_DEVICE_WATCH = 8;
+    public static final int MSG_REQ_WAIT_AREA_STATE = 9;
 
     private final IBinder binder = new ScenarioService.LocalBinder();
     private Context context;
@@ -953,6 +957,33 @@ public class ScenarioService extends Service {
         request(packet);
     }
 
+    public void requestWaitAreaState(){
+        //pollingHandler.removeMessages(MSG_REQ_WAIT_AREA_STATE);
+        //pollingHandler.sendEmptyMessage(MSG_REQ_WAIT_AREA_STATE);
+        RequestWaitAreaStatePacket packet = new RequestWaitAreaStatePacket();
+        packet.setCarId(cfgLoader.getCarId());
+        packet.setCorporationCode(cfgLoader.getCorportaionCode());
+        packet.setServiceNumber(cfgLoader.getServiceNumber());
+        LogHelper.write("requestWaitAreaState --- " + packet.toString());
+        request(packet);
+    }
+
+    private void requestWaitAreaStateInner(){
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RequestWaitAreaStatePacket packet = new RequestWaitAreaStatePacket();
+                packet.setCarId(cfgLoader.getCarId());
+                packet.setCorporationCode(cfgLoader.getCorportaionCode());
+                packet.setServiceNumber(cfgLoader.getServiceNumber());
+                LogHelper.write("requestWaitAreaStateInner --- " + packet.toString());
+                request(packet);
+            }
+        }).start();
+
+    }
+
     //----------------------------------------------------------------------------------------
     // polling & timer
     //----------------------------------------------------------------------------------------
@@ -1533,6 +1564,15 @@ public class ScenarioService extends Service {
                     }
                 }
                 break;
+
+                case Packets.RESPONSE_WAIT_AREA_STATE: {
+                    ResponseWaitAreaStatePacket p = (ResponseWaitAreaStatePacket) response;
+                    WaitStateActivity activity = WaitStateActivity.getInstance();
+                    if(activity != null) {
+                        activity.apply(p);
+                    }
+                }
+                break;
             }
         }
     };
@@ -1624,6 +1664,9 @@ public class ScenarioService extends Service {
                 case MSG_DEVICE_WATCH:
                     watchDevice();
                     sendEmptyMessageDelayed(MSG_DEVICE_WATCH, 1500);
+                    break;
+                case MSG_REQ_WAIT_AREA_STATE:
+                    requestWaitAreaStateInner();
                     break;
             }
         }

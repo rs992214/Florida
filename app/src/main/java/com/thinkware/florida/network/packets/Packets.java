@@ -18,6 +18,7 @@ public class Packets {
     public static final int WAIT_DECISION = 0x1513; // 대기결정
     public static final int WAIT_CANCEL = 0x1515; // 대기취소
     public static final int REQUEST_CALLER_INFO = 0x1517; // 대기배차고객정보 요청
+    public static final int REQUEST_WAIT_AREA_STATE = 0x1519; //대기지역 현황 정보 요청
     public static final int REQUEST_ACCOUNT = 0x1611; // 콜 정산 요청
     public static final int REQUEST_EMERGENCY = 0x1711; // Emergency 요청
     public static final int REQUEST_MESSAGE = 0x1811; // 메시지요청
@@ -41,6 +42,7 @@ public class Packets {
     public static final int RESPONSE_WAIT_DECISION = 0x1514; // 대기결정응답
     public static final int RESPONSE_WAIT_CANCEL = 0x1516; // 대기취소응답
     public static final int WAIT_ORDER_INFO = 0x1518; // 대기배차고객정보
+    public static final int RESPONSE_WAIT_AREA_STATE = 0x151A; //대기지역 현황 정보 응답
     public static final int RESPONSE_ACCOUNT = 0x1612; // 콜정산정보
     public static final int CANCEL_EMERGENCY = 0x1712; // Emergency 응답
     public static final int RESPONSE_MESSAGE = 0x1812; // 메시지 응답
@@ -304,6 +306,10 @@ public class Packets {
                 return 250;
             case RESPONSE_REST: // 휴식/운행응답
                 return 5;
+            case REQUEST_WAIT_AREA_STATE: //대기지역 현황 정보 요청
+                return 7;
+            case RESPONSE_WAIT_AREA_STATE: //대기지역 현황 정보 응답
+                return 244;
             default:
                 return 0;
         }

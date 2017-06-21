@@ -11,6 +11,7 @@ import com.thinkware.florida.network.packets.server2mdt.ResponseMessagePacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponsePeriodSendingPacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponseRestPacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponseServiceReportPacket;
+import com.thinkware.florida.network.packets.server2mdt.ResponseWaitAreaStatePacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponseWaitCancelPacket;
 import com.thinkware.florida.network.packets.server2mdt.ResponseWaitDecisionPacket;
 import com.thinkware.florida.network.packets.server2mdt.ServiceConfigPacket;
@@ -150,6 +151,9 @@ public class ResponsePacket {
                 return new CallerInfoResendPacket(bytes);
             case Packets.RESPONSE_REST:
                 return new ResponseRestPacket(bytes);
+            case Packets.RESPONSE_WAIT_AREA_STATE:
+                return new ResponseWaitAreaStatePacket(bytes);
+
             default:
                 return new ResponsePacket(bytes);
         }

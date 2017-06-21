@@ -39,6 +39,7 @@ import com.thinkware.florida.network.packets.Packets;
 import com.thinkware.florida.scenario.ConfigurationLoader;
 import com.thinkware.florida.scenario.INaviExecutor;
 import com.thinkware.florida.scenario.PreferenceUtil;
+import com.thinkware.florida.scenario.ServiceNumber;
 import com.thinkware.florida.service.ScenarioService;
 import com.thinkware.florida.ui.dialog.SingleLineDialog;
 import com.thinkware.florida.ui.fragment.FragmentUtil;
@@ -89,11 +90,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         LogHelper.write("#### Application 시작.");
         int serviceNumber = ConfigurationLoader.getInstance().getServiceNumber();
-        if(serviceNumber == 3) { //하남
+        if(serviceNumber == ServiceNumber.AREA_HANAM_GEN
+                || serviceNumber == ServiceNumber.AREA_HANAM_CORP
+                || serviceNumber == ServiceNumber.AREA_HANAM_GAEIN) {
+            //하남의 경우 "대기관리" 시나리오로 진행한다.
             setContentView(R.layout.activity_main_hanam);
             menuManWait = findViewById(R.id.menu_manwait);
             menuManWait.setOnClickListener(this);
+        } else if(serviceNumber == ServiceNumber.AREA_SUNGNAM_GEN
+                || serviceNumber == ServiceNumber.AREA_SUNGNAM_CORP
+                || serviceNumber == ServiceNumber.AREA_SUNGNAM_GAEIN) {
+            //성남의 경우 "대기요청/취소" 만 제공한다.
+            setContentView(R.layout.activity_main);
+            menuReqWait = findViewById(R.id.menu_reqwait);
+            menuReqWait.setOnClickListener(this);
+//            setContentView(R.layout.activity_main_hanam);
+//            menuManWait = findViewById(R.id.menu_manwait);
+//            menuManWait.setOnClickListener(this);
         } else {
+            //기타의 경우
             setContentView(R.layout.activity_main);
             menuReqWait = findViewById(R.id.menu_reqwait);
             menuReqWait.setOnClickListener(this);
@@ -203,12 +218,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     return;
                 }
             } else {
-                /*
                 SingleLineDialog dialog = new SingleLineDialog(this,
                         getString(R.string.done),
                         getString(R.string.need_certify));
                 dialog.show();
-                return;*/
+                return;
             }
         }
         switch (resId) {

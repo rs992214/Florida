@@ -5,7 +5,7 @@ import com.thinkware.florida.network.packets.RequestPacket;
 
 /**
  * Created by zic325 on 2016. 9. 8..
- * Live패킷 (GT-F1F1) 6 Byte
+ * Live패킷 (GT-F1F1) 4 Byte
  * MDT -> Server
  */
 public class LivePacket extends RequestPacket {

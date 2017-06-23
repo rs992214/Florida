@@ -271,7 +271,7 @@ public class Packets {
             case REQUEST_REST: // 휴식/운행재개
                 return 7;
             case LIVE: // Live 패킷
-                return 6;
+                return 4;
             case RESPONSE_ACK: // 접속종료 (ACK의 응답 목적으로 사용 한다.)
                 return 3;
             case SERVICE_REQUEST_RESULT: // 서비스요청결과

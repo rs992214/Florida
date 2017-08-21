@@ -200,7 +200,7 @@ public class ConfigurationLoader {
         // 203
         //  -> 메시지창 종료 후 콜 메인창이 보여지는 이슈 수정
         //  -> USB 장치 연결 Detach/Attach 시에 빈차등/미터기 서비스 재시작하도록 방어코드 추가
-        configuration.programVersion = 232;
+        configuration.programVersion = 233;
     }
 
     private void loadFromSdCard(File f, Config configuration) {

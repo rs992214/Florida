@@ -9,6 +9,7 @@ import android.os.Message;
 import com.thinkware.florida.network.packets.Packets;
 import com.thinkware.florida.network.packets.RequestPacket;
 import com.thinkware.florida.network.packets.ResponsePacket;
+import com.thinkware.florida.network.packets.mdt2server.LivePacket;
 import com.thinkware.florida.scenario.ConfigurationLoader;
 import com.thinkware.florida.utility.log.LogHelper;
 
@@ -25,12 +26,14 @@ public class NetworkManager {
     //---------------------------------------------------------------------------------
     public static final String IP_COMMER = "58.180.28.213";
     public static final String IP_DEV = "183.99.72.173";
+    public static final String IP_LIVE_PACKET = "58.180.28.212";
     public static final int PORT_DEV = 3000;
 
 
     private static NetworkManager instance = new NetworkManager();
 
     private Connector connector;
+    private Connector livePacketConnector;
     private String ip;
     private int port;
     private ArrayList<NetworkListener> networkListeners;
@@ -81,11 +84,27 @@ public class NetworkManager {
         }
     }
 
+    public void livePacketConnect(String ip, int port) {
+        if (livePacketConnector != null && livePacketConnector.isConnected()) {
+            LogHelper.d(">> Already connected.");
+        } else {
+            livePacketConnector = new Connector(resultHandler);
+            livePacketConnector.connect(ip, port);
+        }
+    }
+
     public void disconnect() {
         if (connector != null && connector.isConnected()) {
             connector.disconnect();
         }
         connector = null;
+    }
+
+    public void livePacketDisconnect() {
+        if (livePacketConnector != null && livePacketConnector.isConnected()) {
+            livePacketConnector.disconnect();
+        }
+        livePacketConnector = null;
     }
 
     /**
@@ -101,16 +120,33 @@ public class NetworkManager {
         // 2. 서버의 소켓이 닫히는 경우 : Buffer Write시 Exception으로 판단
         // 3. 단말의 소켓이 닫히는 경우 : Socket의 isConnected()로 판단
         // 주기전송과 Live 패킷이 polling 되므로 위 3개의 케이스로 연결 상태 판단 가능하다.
-        if (connector == null
-                || !connector.isConnected()
-                || !isAvailableNetwork(context)) {
-            disconnect();
-            ip = ConfigurationLoader.getInstance().getCallServerIp();
-            port = ConfigurationLoader.getInstance().getCallServerPort();
-            connect(ip, port);
-        }
-        if (connector != null) {
-            connector.request(packet.toBytes());
+
+
+        // 2017. 08. 17 - 권석범
+        // Live 패킷 전송 별도 서버로 분기 처리 및 livePacketConnect, livePacketDisconnect 메서드 추가
+        if ( packet instanceof LivePacket) {
+            if (livePacketConnector == null
+                    || !livePacketConnector.isConnected()
+                    || !isAvailableNetwork(context)) {
+                livePacketDisconnect();
+                port = ConfigurationLoader.getInstance().getCallServerPort();
+                livePacketConnect(IP_LIVE_PACKET, port);
+            }
+            if (livePacketConnector != null) {
+                livePacketConnector.request(packet.toBytes());
+            }
+        } else {
+            if (connector == null
+                    || !connector.isConnected()
+                    || !isAvailableNetwork(context)) {
+                disconnect();
+                ip = ConfigurationLoader.getInstance().getCallServerIp();
+                port = ConfigurationLoader.getInstance().getCallServerPort();
+                connect(ip, port);
+            }
+            if (connector != null) {
+                connector.request(packet.toBytes());
+            }
         }
     }
 

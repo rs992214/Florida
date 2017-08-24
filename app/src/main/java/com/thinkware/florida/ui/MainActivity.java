@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -43,6 +42,7 @@ import com.thinkware.florida.scenario.ServiceNumber;
 import com.thinkware.florida.service.ScenarioService;
 import com.thinkware.florida.ui.dialog.SingleLineDialog;
 import com.thinkware.florida.ui.fragment.FragmentUtil;
+import com.thinkware.florida.ui.fragment.ManageWaitCallFragment;
 import com.thinkware.florida.ui.fragment.MessageListFragment;
 import com.thinkware.florida.ui.fragment.NoticeFragment;
 import com.thinkware.florida.ui.fragment.PassengerInfoFragment;
@@ -50,11 +50,8 @@ import com.thinkware.florida.ui.fragment.QueryCallNumFragment;
 import com.thinkware.florida.ui.fragment.ServiceManagementFragment;
 import com.thinkware.florida.ui.fragment.ServiceStatusFragment;
 import com.thinkware.florida.ui.fragment.WaitCallFragment;
-import com.thinkware.florida.ui.fragment.ManageWaitCallFragment;
 import com.thinkware.florida.utility.log.LogHelper;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -66,8 +63,8 @@ import static com.thinkware.florida.external.service.data.TachoMeterData.STATUS_
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final int REQUEST_CODE_CONFIG = 1000;
-    private static final int USB_VENDOR_ID = 1250;
-    private static final int USB_PRODUCT_ID = 5140;
+    public static final int USB_VENDOR_ID = 1250;
+    public static final int USB_PRODUCT_ID = 5140;
 
     View menuService, menuQueryCall, menuCallerInfo, menuNotice, menuMessage, menuConfig, menuExit;
     View menuManWait, menuReqWait;
@@ -435,7 +432,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             int type = TachoMeterType.getTachoMeterKey(cfgLoader.getMeterDeviceType());
             if (type != -1) {
                 localTachoMeterService.setTachoMeterType(type);
-                localTachoMeterService.launchService();
+                localTachoMeterService.launchService(isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID));
                 if (localTachoMeterService != null) {
                     scenarioService.setServiceTachoMeter(localTachoMeterService);
                 }
@@ -871,30 +868,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         LogHelper.write("#### relaunchDeviceService");
         int type = TachoMeterType.getTachoMeterKey(cfgLoader.getMeterDeviceType());
         if (localTachoMeterService != null && type != -1) {
-            localTachoMeterService.changeTachoMeterType(type);
+            localTachoMeterService.changeTachoMeterType(type, isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID));
         }
 
         if (localVacancyLightService != null) {
             localVacancyLightService.launchService();
         }
-    }
-
-    private boolean isAttachedUSB(int vendorId, int productId) {
-        UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-        if (deviceList != null) {
-            Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-            while (deviceIterator.hasNext()) {
-                UsbDevice device = deviceIterator.next();
-                if (device != null) {
-                    if (vendorId == device.getVendorId()
-                        && productId == device.getProductId()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     private BroadcastReceiver usbReceiver = new BroadcastReceiver() {

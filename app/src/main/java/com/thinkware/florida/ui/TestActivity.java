@@ -63,7 +63,7 @@ public class TestActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (localTachoMeterService != null) {
-                    localTachoMeterService.launchService(isAttachedUSB(MainActivity.USB_VENDOR_ID, MainActivity.USB_PRODUCT_ID));
+                    localTachoMeterService.launchService();
                 }
             }
         });

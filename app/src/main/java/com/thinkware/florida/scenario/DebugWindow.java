@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.thinkware.florida.BuildConfig;
 import com.thinkware.florida.R;
+import com.thinkware.florida.external.serial.SerialPort;
 import com.thinkware.florida.network.manager.ATCommandManager;
 import com.thinkware.florida.network.manager.NetworkManager;
 import com.thinkware.florida.network.packets.Packets;
@@ -296,7 +297,10 @@ public class DebugWindow implements View.OnClickListener {
                     svcTacho = service.getServiceStatus(error) + " " + (cfgLoader.isVacancyLight() ? "" : "(환경설정 미터기 사용)");
                 }
             }
-            txtStatus.append("미터기 : " + svcTacho + "\n");
+
+            boolean isAttachedUSB = SerialPort.isAttachedUSB(context, SerialPort.USB_VENDOR_ID, SerialPort.USB_PRODUCT_ID);
+            txtStatus.append("미터기 : " + svcTacho +
+                            " / 포트 : " + (isAttachedUSB ? "ttyUSB0" : "ttySAC3") + "\n");
 
             String svcVacancy = "";
             if (service.getServiceVacancyLight() == null) {

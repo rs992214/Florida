@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.thinkware.florida.BuildConfig;
 import com.thinkware.florida.R;
 import com.thinkware.florida.external.TachoMeterType;
+import com.thinkware.florida.external.serial.SerialPort;
 import com.thinkware.florida.external.service.EmergencyService;
 import com.thinkware.florida.external.service.IEmergency;
 import com.thinkware.florida.external.service.IEmergencyCallback;
@@ -63,8 +64,6 @@ import static com.thinkware.florida.external.service.data.TachoMeterData.STATUS_
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final int REQUEST_CODE_CONFIG = 1000;
-    public static final int USB_VENDOR_ID = 1250;
-    public static final int USB_PRODUCT_ID = 5140;
 
     View menuService, menuQueryCall, menuCallerInfo, menuNotice, menuMessage, menuConfig, menuExit;
     View menuManWait, menuReqWait;
@@ -432,7 +431,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             int type = TachoMeterType.getTachoMeterKey(cfgLoader.getMeterDeviceType());
             if (type != -1) {
                 localTachoMeterService.setTachoMeterType(type);
-                localTachoMeterService.launchService(isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID));
+                localTachoMeterService.launchService();
                 if (localTachoMeterService != null) {
                     scenarioService.setServiceTachoMeter(localTachoMeterService);
                 }
@@ -853,7 +852,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     private void registerUsbReceiver() {
         LogHelper.write("#### registerUsbReceiver");
-        isAttachedUSB = isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID);
+        isAttachedUSB = SerialPort.isAttachedUSB(this, SerialPort.USB_VENDOR_ID, SerialPort.USB_PRODUCT_ID);
         LogHelper.write("#### isAttachedUSB = " + isAttachedUSB);
         IntentFilter filter = new IntentFilter();
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
@@ -868,7 +867,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         LogHelper.write("#### relaunchDeviceService");
         int type = TachoMeterType.getTachoMeterKey(cfgLoader.getMeterDeviceType());
         if (localTachoMeterService != null && type != -1) {
-            localTachoMeterService.changeTachoMeterType(type, isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID));
+            localTachoMeterService.changeTachoMeterType(type);
         }
 
         if (localVacancyLightService != null) {
@@ -888,10 +887,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     // USB 장치가 떨어져 있는 상태라면 다시 연결 한다.
 
                     relaunchDeviceService();
-                    isAttachedUSB = isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID);
+                    isAttachedUSB = SerialPort.isAttachedUSB(getApplicationContext(), SerialPort.USB_VENDOR_ID, SerialPort.USB_PRODUCT_ID);
                 }
             } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                isAttachedUSB = isAttachedUSB(USB_VENDOR_ID, USB_PRODUCT_ID);
+                isAttachedUSB = SerialPort.isAttachedUSB(getApplicationContext(), SerialPort.USB_VENDOR_ID, SerialPort.USB_PRODUCT_ID);
             }
         }
     };

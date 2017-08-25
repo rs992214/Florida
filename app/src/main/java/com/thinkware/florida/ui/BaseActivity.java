@@ -1,17 +1,12 @@
 package com.thinkware.florida.ui;
 
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.thinkware.florida.scenario.INaviExecutor;
 import com.thinkware.florida.service.AlwaysOnService;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -67,23 +62,5 @@ public class BaseActivity extends AppCompatActivity {
                 finish();
             }
         }, 100);
-    }
-
-    public boolean isAttachedUSB(int vendorId, int productId) {
-        UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-        if (deviceList != null) {
-            Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-            while (deviceIterator.hasNext()) {
-                UsbDevice device = deviceIterator.next();
-                if (device != null) {
-                    if (vendorId == device.getVendorId()
-                            && productId == device.getProductId()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

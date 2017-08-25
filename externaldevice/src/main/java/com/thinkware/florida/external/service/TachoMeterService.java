@@ -43,7 +43,6 @@ public class TachoMeterService extends Service {
     private static final String PORT_ROOT = "/dev";
     private static final String DEFAULT_PORT = "/dev/ttyUSB0";
     private static final String DEFAULT_UART_PORT = "/dev/ttySAC3";
-
     // what type of handler
     private static final int WHAT_BROADCAST_DATA = 2;
     private static final int WHAT_BROADCAST_SERVICE_STATUS = 3;
@@ -186,18 +185,18 @@ public class TachoMeterService extends Service {
      *
      * @param type 미터기 종류
      */
-    public synchronized void changeTachoMeterType(int type, boolean isAttachedUSB) {
+    public synchronized void changeTachoMeterType(int type) {
         this.type = type;
-        launchService(isAttachedUSB);
+        launchService();
     }
 
     /**
      * Serial Port에 연결하여 미터기와 연동하는 로직을 수행한다.
      * 해당 메소드는 Local Bind를 하여 호출해준다.
      */
-    public synchronized void launchService(boolean isAttachedUSB) {
+    public synchronized void launchService() {
         close();
-        tryToLaunchService(isAttachedUSB);
+        tryToLaunchService();
     }
 
     public synchronized boolean isLaunched() {
@@ -213,7 +212,7 @@ public class TachoMeterService extends Service {
         return serviceStatus;
     }
 
-    private void tryToLaunchService(boolean isAttachedUSB) {
+    private void tryToLaunchService() {
         // handler thread는 생성되어 있을테지만 혹시라도 Service create시에 생성되어 있지 않을 때를
         // 대비하여 검사한다.
         if (!isStartedHandlerThread()) {
@@ -227,7 +226,7 @@ public class TachoMeterService extends Service {
         }
 
         try {
-            openPort(isAttachedUSB);
+            openPort();
         } catch (Exception e) {
             setServiceStatus(ServiceStatus.FAILED_PORT_OPENED);
             e.printStackTrace();
@@ -327,8 +326,10 @@ public class TachoMeterService extends Service {
         }
     }
 
-    private void openPort(boolean isAttachedUSB) throws Exception {
+    private void openPort() throws Exception {
+        //USB 허브(EP-100) 연결에 따른 serial port 변경
         portPath = DEFAULT_UART_PORT;
+        boolean isAttachedUSB = SerialPort.isAttachedUSB(this, SerialPort.USB_VENDOR_ID, SerialPort.USB_PRODUCT_ID);
         if (isAttachedUSB) {
             // 단말 재부팅 등의 이유로 Port의 순서가 달라질 수 있는데,
             // 첫번째 Port를 미터기라고 간주하고 연결한다.

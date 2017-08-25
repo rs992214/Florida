@@ -1,5 +1,9 @@
 package com.thinkware.florida.external.serial;
 
+import android.content.Context;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -7,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Serial port를 오픈하고 InputStream과 OutputStream를 생성한다.
@@ -26,6 +32,10 @@ public class SerialPort {
     public static final int O_CREAT = 0x0200;
     public static final int O_TRUNC = 0x0400;
     public static final int O_EXCL = 0x0800;
+
+    //USB허브(ep-100)
+    public static final int USB_VENDOR_ID = 1250;
+    public static final int USB_PRODUCT_ID = 5140;
 
     private FileDescriptor fd;
     private FileInputStream inputStream;
@@ -59,6 +69,25 @@ public class SerialPort {
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static boolean isAttachedUSB(Context context, int vendorId, int productId) {
+        UsbManager manager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
+        if (deviceList != null) {
+            Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+            while (deviceIterator.hasNext()) {
+                UsbDevice device = deviceIterator.next();
+                if (device != null) {
+                    if (vendorId == device.getVendorId()
+                            && productId == device.getProductId()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     // JNI

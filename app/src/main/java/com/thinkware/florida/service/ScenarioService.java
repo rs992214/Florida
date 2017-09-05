@@ -1105,22 +1105,43 @@ public class ScenarioService extends Service {
                             requestConfig(cfgLoader.getConfigurationVersion());
                         }
 
-                        final int noticeCode = p.getNoticeCode();
-                        if (noticeCode > 0) {
-                            Timer timerNotice = new Timer();
-                            timerNotice.schedule(new TimerTask() {
+                        // 2017. 08. 30 - 권석범
+                        // 인솔라인 김용태 팀장의 요청으로 서버에서 받은 서비스 번호를 SharedPreferences 값과 비교해서 다를 경우
+                        // 값 교체 및 앱 재시작하게 처리
+                        if (cfgLoader.getServiceNumber() != p.getServiceNumber()){
+                            cfgLoader.setServiceNumber(p.getServiceNumber());
+                            cfgLoader.save();
+
+                            Intent intent = new Intent(ScenarioService.this, PopupActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("MSG", getString(R.string.changed_service_number));
+                            startActivity(intent);
+
+                            new Timer().schedule(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    NoticesPacket noticesPacket = PreferenceUtil.getNotice(context);
-                                    if (noticesPacket != null && noticesPacket.getNoticeCode() == noticeCode) {
-                                        // 기존 공지사항과 같은 공지사항이므로 서버에 요청하지 않는다.
-                                        showNoticePopupActivity();
-                                    } else {
-                                        // 새로운 공지사항이 있는 경우이므로 공지사항 페이지를 보여준다.
-                                        requestNotice();
-                                    }
+                                    ((MainApplication) getApplication()).resetServiceAndRestartApplication();
                                 }
-                            }, 1500);
+                            }, 5000);
+
+                        } else {
+
+                            final int noticeCode = p.getNoticeCode();
+                            if (noticeCode > 0) {
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        NoticesPacket noticesPacket = PreferenceUtil.getNotice(context);
+                                        if (noticesPacket != null && noticesPacket.getNoticeCode() == noticeCode) {
+                                            // 기존 공지사항과 같은 공지사항이므로 서버에 요청하지 않는다.
+                                            showNoticePopupActivity();
+                                        } else {
+                                            // 새로운 공지사항이 있는 경우이므로 공지사항 페이지를 보여준다.
+                                            requestNotice();
+                                        }
+                                    }
+                                }, 1500);
+                            }
                         }
 
                         if (PreferenceUtil.getWaitArea(context) != null) {

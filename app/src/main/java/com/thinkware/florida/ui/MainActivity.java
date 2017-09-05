@@ -43,6 +43,7 @@ import com.thinkware.florida.scenario.ServiceNumber;
 import com.thinkware.florida.service.ScenarioService;
 import com.thinkware.florida.ui.dialog.SingleLineDialog;
 import com.thinkware.florida.ui.fragment.FragmentUtil;
+import com.thinkware.florida.ui.fragment.ManageWaitCallFragment;
 import com.thinkware.florida.ui.fragment.MessageListFragment;
 import com.thinkware.florida.ui.fragment.NoticeFragment;
 import com.thinkware.florida.ui.fragment.PassengerInfoFragment;
@@ -50,7 +51,6 @@ import com.thinkware.florida.ui.fragment.QueryCallNumFragment;
 import com.thinkware.florida.ui.fragment.ServiceManagementFragment;
 import com.thinkware.florida.ui.fragment.ServiceStatusFragment;
 import com.thinkware.florida.ui.fragment.WaitCallFragment;
-import com.thinkware.florida.ui.fragment.ManageWaitCallFragment;
 import com.thinkware.florida.utility.log.LogHelper;
 
 import java.util.HashMap;
@@ -90,25 +90,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         LogHelper.write("#### Application 시작.");
         int serviceNumber = ConfigurationLoader.getInstance().getServiceNumber();
+
+        /** 2017. 09. 05 - 권석범
+         *  인솔라인 김용태 팀장 요청으로 서비스 번호에 따른 레이아웃 분기 처리 수정
+         *  대기관리 UI 적용 : 서비스번호 ( 0, 5, 6, 100, 11, 12)
+         *  일반 대기 UI 적용 : 위의 서비스 번호 이외의 지역
+         */
         if(serviceNumber == ServiceNumber.AREA_HANAM_GEN
                 || serviceNumber == ServiceNumber.AREA_HANAM_CORP
-                || serviceNumber == ServiceNumber.AREA_HANAM_GAEIN) {
+                || serviceNumber == ServiceNumber.AREA_HANAM_GAEIN
+                || serviceNumber == ServiceNumber.AREA_SUNGNAM_GEN
+                || serviceNumber == ServiceNumber.AREA_SUNGNAM_CORP
+                || serviceNumber == ServiceNumber.AREA_SUNGNAM_GAEIN) {
             //하남의 경우 "대기관리" 시나리오로 진행한다.
             setContentView(R.layout.activity_main_hanam);
             menuManWait = findViewById(R.id.menu_manwait);
             menuManWait.setOnClickListener(this);
-        } else if(serviceNumber == ServiceNumber.AREA_SUNGNAM_GEN
-                || serviceNumber == ServiceNumber.AREA_SUNGNAM_CORP
-                || serviceNumber == ServiceNumber.AREA_SUNGNAM_GAEIN) {
-            //성남의 경우 "대기요청/취소" 만 제공한다.
-            setContentView(R.layout.activity_main);
-            menuReqWait = findViewById(R.id.menu_reqwait);
-            menuReqWait.setOnClickListener(this);
-//            setContentView(R.layout.activity_main_hanam);
-//            menuManWait = findViewById(R.id.menu_manwait);
-//            menuManWait.setOnClickListener(this);
         } else {
-            //기타의 경우
             setContentView(R.layout.activity_main);
             menuReqWait = findViewById(R.id.menu_reqwait);
             menuReqWait.setOnClickListener(this);

@@ -1107,11 +1107,11 @@ public class ScenarioService extends Service {
 
                         // 2017. 08. 30 - 권석범
                         // 인솔라인 김용태 팀장의 요청으로 서버에서 받은 서비스 번호를 SharedPreferences 값과 비교해서 다를 경우
-                        // 값 교체 및 앱 재시작하게 처리
+                        // 값 교체하게 처리
                         if (cfgLoader.getServiceNumber() != p.getServiceNumber()){
                             cfgLoader.setServiceNumber(p.getServiceNumber());
                             cfgLoader.save();
-
+	                        /*
                             Intent intent = new Intent(ScenarioService.this, PopupActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.putExtra("MSG", getString(R.string.changed_service_number));
@@ -1123,7 +1123,7 @@ public class ScenarioService extends Service {
                                     ((MainApplication) getApplication()).resetServiceAndRestartApplication();
                                 }
                             }, 5000);
-
+							*/
                         } else {
 
                             final int noticeCode = p.getNoticeCode();

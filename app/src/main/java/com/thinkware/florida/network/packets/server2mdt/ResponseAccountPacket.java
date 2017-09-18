@@ -15,7 +15,7 @@ public class ResponseAccountPacket extends ResponsePacket {
     private int normalCallNumber; // 일반 콜 건수 (2) -> 총 콜수
     private int normalCallFee; // 일반 콜 회비 (4) -> 일반콜수
     private int businessCallNumber; // 업무 콜 건수 (2)
-    private int businessCallFee; // 업무 콜 회비 (4)
+    private int businessCallFee; // 업무 콜 회비 (4) -> 첨두 콜수
     private int arrear; // 미납금 (4) -> 앱 콜수
     private int lastMonthOffsetting; // 전월 상계금 (4) -> 외곽 콜수
     private int adjustment; // 가감 금액 (4)

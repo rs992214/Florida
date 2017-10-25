@@ -54,7 +54,7 @@
         android:layout_height="30dp"
         android:layout_marginLeft="195dp"
         android:layout_marginTop="150dp"
-        android:text="외곽콜수"/>
+        android:text="외곽건수"/>
 
     <TextView
         style="@style/txtCallNumMoney"

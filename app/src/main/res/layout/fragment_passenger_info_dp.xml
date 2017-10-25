@@ -1,0 +1,113 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             style="@style/normalWindow"
+             android:id="@+id/fl_container"
+             android:background="@drawable/passengerinfo_dp_bg"
+             tools:context="com.thinkware.florida.ui.fragment.PassengerInfoFragment">
+    <TextView
+        android:id="@+id/textView_status"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="110dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="22dp"
+        android:singleLine="true"
+        android:textColor="#ffffff"
+        android:textSize="22dp" />
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_call"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_marginLeft="390dp"
+        android:src="@drawable/call_button"/>
+
+    <TextView
+        style="@style/txtNormal"
+        android:id="@+id/txt_callnum"
+        android:layout_width="82dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="102dp"/>
+
+    <TextView
+        style="@style/txtHighlight"
+        android:id="@+id/txt_phonenumber"
+        android:layout_width="176dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginLeft="255dp"/>
+
+    <TextView
+        style="@style/txtNormal"
+        android:id="@+id/txt_passenger_name"
+        android:layout_width="84dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="118dp"
+        android:layout_marginLeft="102dp"/>
+
+    <TextView
+        style="@style/txtNormal"
+        android:id="@+id/txt_disabled_grade"
+        android:layout_width="84dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="118dp"
+        android:layout_marginLeft="265dp"/>
+
+    <TextView
+        style="@style/txtNormal"
+        android:id="@+id/txt_wheelchair_yn"
+        android:layout_width="50dp"
+        android:layout_height="37dp"
+        android:background="@drawable/common_text_box"
+        android:layout_marginTop="118dp"
+        android:layout_marginLeft="384dp"/>
+
+    <com.thinkware.florida.ui.view.AutoResizeTextView
+        style="@style/txtCenterNormal"
+        android:id="@+id/txt_location"
+        android:layout_width="332dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginLeft="102dp"
+        android:textSize="30sp"
+        android:maxLines="1"/>
+
+    <TextView
+        style="@style/txtContent"
+        android:id="@+id/txt_location_detail"
+        android:layout_width="330dp"
+        android:layout_height="110dp"
+        android:layout_marginTop="200dp"
+        android:padding="10dp"
+        android:textSize="25sp"
+        android:layout_marginLeft="103dp"/>
+
+    <com.thinkware.florida.ui.view.AutoResizeTextView
+        style="@style/txtCenterNormal"
+        android:id="@+id/txt_destination"
+        android:layout_width="332dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="316dp"
+        android:layout_marginLeft="102dp"
+        android:textSize="30sp"
+        android:maxLines="1"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_guide"
+        android:layout_width="141dp"
+        android:layout_height="61dp"
+        android:layout_marginTop="366dp"
+        android:layout_marginLeft="82dp"
+        android:src="@drawable/guide"/>
+
+    <com.thinkware.florida.ui.view.StatusImageView
+        android:id="@+id/btn_fail"
+        android:layout_width="141dp"
+        android:layout_height="61dp"
+        android:layout_marginTop="366dp"
+        android:layout_marginLeft="252dp"
+        android:src="@drawable/fail"/>
+
+</FrameLayout>

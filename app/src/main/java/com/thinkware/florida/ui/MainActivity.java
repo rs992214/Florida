@@ -547,12 +547,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
 
                 if (boardType == Packets.BoardType.Boarding) {
-                    scenarioService.applyDriving(data.getFare(), data.getMileage());
+                    scenarioService.applyDriving(data.getFare(), data.getVacancyMileage());
                 } else if (boardType == Packets.BoardType.Empty) {
                     scenarioService.applyVacancy(data.getFare(), data.getMileage());
                 }
             }
-
         }
 
         @Override

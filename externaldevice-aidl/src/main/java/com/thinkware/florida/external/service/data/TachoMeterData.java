@@ -8,118 +8,151 @@ import android.os.Parcelable;
  */
 public final class TachoMeterData implements Parcelable {
 
-    /**
-     * 빈차
-     */
-    public static final int STATUS_VACANCY = 0x0001;
-    /**
-     * 주행
-     */
-    public static final int STATUS_DRIVING = 0x0002;
-    /**
-     * 할증
-     */
-    public static final int STATUS_EXTRA_CHARGE = 0x0004;
-    /**
-     * 지불
-     */
-    public static final int STATUS_PAYMENT = 0x0008;
-    /**
-     * 복합
-     */
-    public static final int STATUS_COMPLEX = 0x0010;
-    /**
-     * 콜
-     */
-    public static final int STATUS_CALL = 0x0020;
+	/**
+	 * 빈차
+	 */
+	public static final int STATUS_VACANCY = 0x0001;
+	/**
+	 * 주행
+	 */
+	public static final int STATUS_DRIVING = 0x0002;
+	/**
+	 * 할증
+	 */
+	public static final int STATUS_EXTRA_CHARGE = 0x0004;
+	/**
+	 * 지불
+	 */
+	public static final int STATUS_PAYMENT = 0x0008;
+	public static final int STATUS_PAYMENT_EXCLUDE_KUMHO = 0x000A;
+	/**
+	 * 복합
+	 */
+	public static final int STATUS_COMPLEX = 0x0010;
+	/**
+	 * 콜
+	 */
+	public static final int STATUS_CALL = 0x0020;
 
-    public static final Creator<TachoMeterData> CREATOR = new Creator<TachoMeterData>() {
-        @Override
-        public TachoMeterData createFromParcel(Parcel in) {
-            return new TachoMeterData(in);
-        }
+	public static final Creator<TachoMeterData> CREATOR = new Creator<TachoMeterData>() {
+		@Override
+		public TachoMeterData createFromParcel(Parcel in) {
+			return new TachoMeterData(in);
+		}
 
-        @Override
-        public TachoMeterData[] newArray(int size) {
-            return new TachoMeterData[size];
-        }
-    };
+		@Override
+		public TachoMeterData[] newArray(int size) {
+			return new TachoMeterData[size];
+		}
+	};
 
-    private int command;
-    private int status;
-    private int fare;
-    private int mileage;
+	private int command;
+	private int status;
+	private int fare;
+	private int mileage;
+	private int vacancyMileage;
+	private String buffer;
 
-    public TachoMeterData() {
-    }
+	public TachoMeterData() {
+	}
 
-    private TachoMeterData(Parcel in) {
-        readFromParcel(in);
-    }
+	private TachoMeterData(Parcel in) {
+		readFromParcel(in);
+	}
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(command);
-        dest.writeInt(status);
-        dest.writeInt(fare);
-        dest.writeInt(mileage);
-    }
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(command);
+		dest.writeInt(status);
+		dest.writeInt(fare);
+		dest.writeInt(mileage);
+		dest.writeInt(vacancyMileage);
+		dest.writeString(buffer);
+	}
 
-    public void readFromParcel(Parcel in) {
-        command = in.readInt();
-        status = in.readInt();
-        fare = in.readInt();
-        mileage = in.readInt();
-    }
+	public void readFromParcel(Parcel in) {
+		command = in.readInt();
+		status = in.readInt();
+		fare = in.readInt();
+		mileage = in.readInt();
+		vacancyMileage = in.readInt();
+		buffer = in.readString();
+	}
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
+	@Override
+	public int describeContents() {
+		return 0;
+	}
 
-    public int getCommand() {
-        return command;
-    }
+	public int getCommand() {
+		return command;
+	}
 
-    public void setCommand(int command) {
-        this.command = command;
-    }
+	public void setCommand(int command) {
+		this.command = command;
+	}
 
-    /**
-     * 미터기의 버튼 상태를 반환한다.
-     */
-    public int getStatus() {
-        return status;
-    }
+	/**
+	 * 미터기의 버튼 상태를 반환한다.
+	 */
+	public int getStatus() {
+		return status;
+	}
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
+	public void setStatus(int status) {
+		this.status = status;
+	}
 
-    /**
-     * 요금을 반환한다.
-     *
-     * @return int
-     */
-    public int getFare() {
-        return fare;
-    }
+	/**
+	 * 요금을 반환한다.
+	 *
+	 * @return int
+	 */
+	public int getFare() {
+		return fare;
+	}
 
-    public void setFare(int fare) {
-        this.fare = fare;
-    }
+	public void setFare(int fare) {
+		this.fare = fare;
+	}
 
-    /**
-     * 주행거리를 반환한다.
-     *
-     * @return int
-     */
-    public int getMileage() {
-        return mileage;
-    }
+	/**
+	 * 주행거리를 반환한다.
+	 *
+	 * @return int
+	 */
+	public int getMileage() {
+		return mileage;
+	}
 
-    public void setMileage(int mileage) {
-        this.mileage = mileage;
-    }
+	public void setMileage(int mileage) {
+		this.mileage = mileage;
+	}
+
+	/**
+	 * 빈차거리를 반환한다.
+	 *
+	 * @return int
+	 */
+	public int getVacancyMileage() {
+		return vacancyMileage;
+	}
+
+	public void setVacancyMileage(int vacancyMileage) {
+		this.vacancyMileage = vacancyMileage;
+	}
+
+	/**
+	 * 원본 데이터를 반환한다.
+	 *
+	 * @return String
+	 */
+	public String getBuffer() {
+		return buffer;
+	}
+
+	public void setBuffer(String buffer) {
+		this.buffer = buffer;
+	}
 
 }

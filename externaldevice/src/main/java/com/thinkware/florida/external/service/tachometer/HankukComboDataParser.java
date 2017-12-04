@@ -27,7 +27,8 @@ final class HankukComboDataParser extends DataParser {
         FLAG(0, 1),
         BUTTON_STATUS(1, 2),
         FARE(16, 3),
-        MILEAGE(27, 3),;
+        MILEAGE(27, 3),
+	    VACANCY_MILEAGE(30, 3),;
 
         private int index;
         private int length;
@@ -110,12 +111,18 @@ final class HankukComboDataParser extends DataParser {
             int status = getConvertStatusData(buffer[1]);
             int fare = 0;
             int mileage = 0;
+            int vacancyMileage = 0;
             String fareStr = ByteUtil.toHexString(buffer, POS.FARE.getIndex(), POS.FARE.getLength());
             String mileageStr = ByteUtil.toHexString(buffer, POS.MILEAGE.getIndex(), POS.MILEAGE.getLength());
+	        /** 2017. 10. 25 - 권석범
+	         *  인솔라인 김용태 팀장 요청으로 빈차 -> 주행 전환시 빈차이동 거리를 전송하기 위해 vacancyMileage 추가
+	         */
+			String vacancyMileageStr = ByteUtil.toHexString(buffer, POS.VACANCY_MILEAGE.getIndex(), POS.VACANCY_MILEAGE.getLength());
 
             try {
                 fare = Integer.valueOf(fareStr);
                 mileage =Integer.valueOf(mileageStr);
+	            vacancyMileage =Integer.valueOf(vacancyMileageStr);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -125,6 +132,7 @@ final class HankukComboDataParser extends DataParser {
             data.setStatus(status);
             data.setFare(fare);
             data.setMileage(mileage);
+	        data.setVacancyMileage(vacancyMileage);
 
             if (callback != null) {
                 callback.onParse(data);

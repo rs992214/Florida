@@ -17,7 +17,7 @@ import com.thinkware.florida.network.packets.server2mdt.ResponseAccountPacket;
  */
 public class QueryCallDetailFragment extends BaseFragment {
     View root, btReturn;
-    TextView txtCallCount, txtCallNormal, txtCallApp, txtCallExtern, txtNote;
+    TextView txtCallCount, txtCallNormal, txtCallApp, txtCallExtern, txtCallCheomdu, txtNote;
 
     public QueryCallDetailFragment() {
         // Required empty public constructor
@@ -49,6 +49,7 @@ public class QueryCallDetailFragment extends BaseFragment {
         txtCallNormal = (TextView) root.findViewById(R.id.txt_call_normal);
         txtCallApp = (TextView) root.findViewById(R.id.txt_call_app);
         txtCallExtern = (TextView) root.findViewById(R.id.txt_call_extern);
+	    txtCallCheomdu = (TextView) root.findViewById(R.id.txt_call_cheomdu);
         txtNote = (TextView) root.findViewById(R.id.txt_note);
 
         String begin = getArguments().getString("BEGIN");
@@ -62,6 +63,7 @@ public class QueryCallDetailFragment extends BaseFragment {
         txtCallNormal.setText(String.valueOf(p.getNormalCallFee()));
         txtCallApp.setText(String.valueOf(p.getArrear()));
         txtCallExtern.setText(String.valueOf(p.getLastMonthOffsetting()));
+	    txtCallCheomdu.setText(String.valueOf(p.getBusinessCallFee()));
         txtNote.setText(TextUtils.isEmpty(p.getMemo()) ? "" : p.getMemo());
     }
 }

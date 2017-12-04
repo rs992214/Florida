@@ -1,8 +1,5 @@
 package com.thinkware.florida.scenario;
 
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -25,7 +22,6 @@ import android.widget.Toast;
 
 import com.thinkware.florida.BuildConfig;
 import com.thinkware.florida.R;
-import com.thinkware.florida.external.serial.SerialPort;
 import com.thinkware.florida.network.manager.ATCommandManager;
 import com.thinkware.florida.network.manager.NetworkManager;
 import com.thinkware.florida.network.packets.Packets;
@@ -34,7 +30,6 @@ import com.thinkware.florida.network.packets.server2mdt.ResponseWaitDecisionPack
 import com.thinkware.florida.network.packets.server2mdt.WaitOrderInfoPacket;
 import com.thinkware.florida.service.ScenarioService;
 import com.thinkware.florida.ui.LogFileActivity;
-import com.thinkware.florida.ui.MainActivity;
 import com.thinkware.florida.ui.MainApplication;
 import com.thinkware.florida.utility.log.LogHelper;
 
@@ -297,10 +292,7 @@ public class DebugWindow implements View.OnClickListener {
                     svcTacho = service.getServiceStatus(error) + " " + (cfgLoader.isVacancyLight() ? "" : "(환경설정 미터기 사용)");
                 }
             }
-
-            boolean isAttachedUSB = SerialPort.isAttachedUSB(context, SerialPort.USB_VENDOR_ID, SerialPort.USB_PRODUCT_ID);
-            txtStatus.append("미터기 : " + svcTacho +
-                            " / 포트 : " + (isAttachedUSB ? "ttyUSB0" : "ttySAC3") + "\n");
+            txtStatus.append("미터기 : " + svcTacho + "\n");
 
             String svcVacancy = "";
             if (service.getServiceVacancyLight() == null) {
@@ -476,23 +468,7 @@ public class DebugWindow implements View.OnClickListener {
     // 앱 종료 후 재시작
     public void restartApplication() {
         cancelTimer();
-        if (service != null) {
-            service.reset();
-        }
-
-        Activity act = ((MainApplication) context).getActivity(MainActivity.class);
-        if (act != null) {
-            act.finish();
-        }
-
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC, System.currentTimeMillis() + 2000,
-                PendingIntent.getActivity(context, 0, intent, 0));
-        android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(0);
+        ((MainApplication) context.getApplicationContext()).resetServiceAndRestartApplication();
     }
 
     // 창 닫기

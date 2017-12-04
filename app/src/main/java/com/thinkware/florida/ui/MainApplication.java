@@ -245,6 +245,19 @@ public class MainApplication extends Application {
                 PendingIntent.getActivity(getApplicationContext(), 0, intent, 0));
     }
 
+    public void resetServiceAndRestartApplication() {
+        if (scenarioService != null ) {
+            scenarioService.reset();
+        }
+        Activity act = getActivity(MainActivity.class);
+        if (act != null) {
+            act.finish();
+        }
+        restartApplication();
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
+    }
+
     public String getInternalDir() {
         return getExternalFilesDir(null) + File.separator + "log";
     }

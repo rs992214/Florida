@@ -63,6 +63,7 @@ import com.thinkware.florida.scenario.DebugWindow;
 import com.thinkware.florida.scenario.GpsHelper;
 import com.thinkware.florida.scenario.INaviExecutor;
 import com.thinkware.florida.scenario.PreferenceUtil;
+import com.thinkware.florida.scenario.ServiceNumber;
 import com.thinkware.florida.ui.MainApplication;
 import com.thinkware.florida.ui.MessagePopupActivity;
 import com.thinkware.florida.ui.NoticePopupActivity;
@@ -518,8 +519,13 @@ public class ScenarioService extends Service {
                 LogHelper.write("#### 네트워크에 연결됨");
                 ScenarioService svc = ((MainApplication) context.getApplicationContext()).getScenarioService();
                 if (svc != null && svc.hasCertification()) {
+
+	                // 2017. 10. 11 - 권석범
+	                // 김용태 팀장 요청으로 모뎀 에러 보고 전송 부분 주석 처리
+	                // 간헐적으로 모뎀 에러 발생 후 네트워크 연결된 뒤 1회 보고 이나, 확인되지 않은 상황에서 여러건이 보고되어 DB에 축적되는 상황이라고 함
+	                // (saveMdemLog 부분은 원래 주석처리 되어 있었음)
                     // 네트워크 연결이 끊어진 후 재접속시 휴식 패킷에 오류 보고를 한다.
-                    requestRest(Packets.RestType.ModemError);
+                    //requestRest(Packets.RestType.ModemError);
 
                     //saveModemLog(context);
                 }
@@ -1105,22 +1111,29 @@ public class ScenarioService extends Service {
                             requestConfig(cfgLoader.getConfigurationVersion());
                         }
 
-                        final int noticeCode = p.getNoticeCode();
-                        if (noticeCode > 0) {
-                            Timer timerNotice = new Timer();
-                            timerNotice.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    NoticesPacket noticesPacket = PreferenceUtil.getNotice(context);
-                                    if (noticesPacket != null && noticesPacket.getNoticeCode() == noticeCode) {
-                                        // 기존 공지사항과 같은 공지사항이므로 서버에 요청하지 않는다.
-                                        showNoticePopupActivity();
-                                    } else {
-                                        // 새로운 공지사항이 있는 경우이므로 공지사항 페이지를 보여준다.
-                                        requestNotice();
+                        // 2017. 08. 30 - 권석범
+                        // 인솔라인 김용태 팀장의 요청으로 서버에서 받은 서비스 번호를 SharedPreferences 값과 비교 후
+                        // 다를경우 교체하게 처리
+                        if (cfgLoader.getServiceNumber() != p.getServiceNumber()){
+                            cfgLoader.setServiceNumber(p.getServiceNumber());
+                            cfgLoader.save();
+                        } else {
+                            final int noticeCode = p.getNoticeCode();
+                            if (noticeCode > 0) {
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        NoticesPacket noticesPacket = PreferenceUtil.getNotice(context);
+                                        if (noticesPacket != null && noticesPacket.getNoticeCode() == noticeCode) {
+                                            // 기존 공지사항과 같은 공지사항이므로 서버에 요청하지 않는다.
+                                            showNoticePopupActivity();
+                                        } else {
+                                            // 새로운 공지사항이 있는 경우이므로 공지사항 페이지를 보여준다.
+                                            requestNotice();
+                                        }
                                     }
-                                }
-                            }, 1500);
+                                }, 1500);
+                            }
                         }
 
                         if (PreferenceUtil.getWaitArea(context) != null) {
@@ -1348,7 +1361,9 @@ public class ScenarioService extends Service {
                         return;
                     }
 
-                    OrderInfoPacket packet = (OrderInfoPacket) response;
+	                OrderInfoPacket packet = (OrderInfoPacket) response;
+	                ScenarioService scenarioService = ((MainApplication) getApplication()).getScenarioService();
+	                int serviceNumber = cfgLoader.getServiceNumber();
 
                     if ((PreferenceUtil.getWaitOrderInfo(context) != null
                             || PreferenceUtil.getNormalCallInfo(context) != null)
@@ -1371,14 +1386,23 @@ public class ScenarioService extends Service {
                     } else if (PreferenceUtil.getWaitArea(context) != null
                             && packet.getOrderKind() == Packets.OrderKind.WaitOrderTwoWay) {
                         // 대기배차 상태인데 양방향 대기배차 수신될 경우 (하남사용)
-                        WavResourcePlayer.getInstance(context).play(R.raw.voice_160_116);
-                        PreferenceUtil.setTempCallInfo(context, packet);
-                        //showRequestOrderPopupActivity(packet);
-                        showRequestOrderPopupActivity();
+	                    PreferenceUtil.setTempCallInfo(context, packet);
+		                //복지콜 추가로 인한 분기처리. - 서비스 번호
+		                if (serviceNumber == ServiceNumber.AREA_SUNGNAM_BOKJI) {
+			                scenarioService.requestOrderRealtime(Packets.OrderDecisionType.Request, packet);
+		                } else {
+			                WavResourcePlayer.getInstance(context).play(R.raw.voice_160_116);
+			                showRequestOrderPopupActivity();
+		                }
                     } else {
-                        WavResourcePlayer.getInstance(context).play(R.raw.voice_160_116);
-                        PreferenceUtil.setTempCallInfo(context, packet);
-                        showRequestOrderPopupActivity();
+	                    PreferenceUtil.setTempCallInfo(context, packet);
+		                //복지콜 추가로 인한 분기처리. - 서비스 번호
+	                    if (serviceNumber == ServiceNumber.AREA_SUNGNAM_BOKJI) {
+			                scenarioService.requestOrderRealtime(Packets.OrderDecisionType.Request, packet);
+		                } else {
+			                WavResourcePlayer.getInstance(context).play(R.raw.voice_160_116);
+			                showRequestOrderPopupActivity();
+		                }
                     }
                 }
                 break;

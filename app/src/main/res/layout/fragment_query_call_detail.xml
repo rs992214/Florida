@@ -54,7 +54,7 @@
         android:layout_height="30dp"
         android:layout_marginLeft="195dp"
         android:layout_marginTop="150dp"
-        android:text="외곽콜수"/>
+        android:text="외곽건수"/>
 
     <TextView
         style="@style/txtCallNumMoney"
@@ -63,6 +63,22 @@
         android:layout_height="30dp"
         android:layout_marginLeft="295dp"
         android:layout_marginTop="150dp"/>
+
+    <TextView
+        style="@style/txtCallNumAttr"
+        android:layout_width="90dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="195dp"
+        android:layout_marginTop="188dp"
+        android:text="첨두콜수"/>
+
+    <TextView
+        style="@style/txtCallNumMoney"
+        android:id="@+id/txt_call_cheomdu"
+        android:layout_width="138dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="295dp"
+        android:layout_marginTop="188dp"/>
 
     <TextView
         style="@style/txtContent"

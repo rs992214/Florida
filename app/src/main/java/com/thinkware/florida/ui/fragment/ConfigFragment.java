@@ -111,33 +111,81 @@ public class ConfigFragment extends BaseFragment {
                 CorporationDialog dialog = new CorporationDialog(getActivity(), new CorporationDialog.ICorporationDialogListener() {
                     @Override
                     public void onSelectedType(int type) {
-                        if (type == 1) { // 개인
-                            toggleIsCorp.setChecked(false);
-                            txtCorpCode.setText("1");
-                            txtAppServerIP1.setText("58");
-                            txtAppServerIP2.setText("180");
-                            txtAppServerIP3.setText("28");
-                            txtAppServerIP4.setText("213");
-                            txtAppServerPort.setText("3000");
-                            txtUpdateServerIP1.setText("58");
-                            txtUpdateServerIP2.setText("180");
-                            txtUpdateServerIP3.setText("28");
-                            txtUpdateServerIP4.setText("213");
-                            txtUpdateServerPort.setText("3060");
-                        } else if (type == 2) { // 법인
-                            toggleIsCorp.setChecked(true);
-                            txtCorpCode.setText("11");
-                            txtAppServerIP1.setText("58");
-                            txtAppServerIP2.setText("180");
-                            txtAppServerIP3.setText("28");
-                            txtAppServerIP4.setText("207");
-                            txtAppServerPort.setText("3000");
-                            txtUpdateServerIP1.setText("58");
-                            txtUpdateServerIP2.setText("180");
-                            txtUpdateServerIP3.setText("28");
-                            txtUpdateServerIP4.setText("207");
-                            txtUpdateServerPort.setText("3060");
-                        }
+	                    switch (type) {
+		                    case 1:  // 개인
+			                    toggleIsCorp.setChecked(false);
+			                    txtCorpCode.setText("1");
+			                    txtAppServerIP1.setText("58");
+			                    txtAppServerIP2.setText("180");
+			                    txtAppServerIP3.setText("28");
+			                    txtAppServerIP4.setText("213");
+			                    txtAppServerPort.setText("3000");
+			                    txtUpdateServerIP1.setText("58");
+			                    txtUpdateServerIP2.setText("180");
+			                    txtUpdateServerIP3.setText("28");
+			                    txtUpdateServerIP4.setText("213");
+			                    txtUpdateServerPort.setText("3060");
+			                    break;
+		                    case 2:  // 법인
+			                    toggleIsCorp.setChecked(true);
+			                    txtCorpCode.setText("11");
+			                    txtAppServerIP1.setText("58");
+			                    txtAppServerIP2.setText("180");
+			                    txtAppServerIP3.setText("28");
+			                    txtAppServerIP4.setText("207");
+			                    txtAppServerPort.setText("3000");
+			                    txtUpdateServerIP1.setText("58");
+			                    txtUpdateServerIP2.setText("180");
+			                    txtUpdateServerIP3.setText("28");
+			                    txtUpdateServerIP4.setText("207");
+			                    txtUpdateServerPort.setText("3060");
+			                    break;
+		                    case 3:  // 순천
+			                    toggleIsCorp.setChecked(false);
+			                    txtServiceCode.setText("7");
+			                    txtCorpCode.setText("1");
+			                    txtAppServerIP1.setText("218");
+			                    txtAppServerIP2.setText("149");
+			                    txtAppServerIP3.setText("86");
+			                    txtAppServerIP4.setText("162");
+			                    txtAppServerPort.setText("3000");
+			                    txtUpdateServerIP1.setText("58");
+			                    txtUpdateServerIP2.setText("180");
+			                    txtUpdateServerIP3.setText("28");
+			                    txtUpdateServerIP4.setText("207");
+			                    txtUpdateServerPort.setText("3060");
+			                    break;
+		                    case 4:  // 하남 개인
+			                    toggleIsCorp.setChecked(true);
+			                    txtServiceCode.setText("11");
+			                    txtCorpCode.setText("1");
+			                    txtAppServerIP1.setText("58");
+			                    txtAppServerIP2.setText("180");
+			                    txtAppServerIP3.setText("28");
+			                    txtAppServerIP4.setText("208");
+			                    txtAppServerPort.setText("3000");
+			                    txtUpdateServerIP1.setText("58");
+			                    txtUpdateServerIP2.setText("180");
+			                    txtUpdateServerIP3.setText("28");
+			                    txtUpdateServerIP4.setText("207");
+			                    txtUpdateServerPort.setText("3060");
+			                    break;
+		                    case 5:  // 하남 법인
+			                    toggleIsCorp.setChecked(true);
+			                    txtServiceCode.setText("12");
+			                    txtCorpCode.setText("11");
+			                    txtAppServerIP1.setText("58");
+			                    txtAppServerIP2.setText("180");
+			                    txtAppServerIP3.setText("28");
+			                    txtAppServerIP4.setText("215");
+			                    txtAppServerPort.setText("3000");
+			                    txtUpdateServerIP1.setText("58");
+			                    txtUpdateServerIP2.setText("180");
+			                    txtUpdateServerIP3.setText("28");
+			                    txtUpdateServerIP4.setText("207");
+			                    txtUpdateServerPort.setText("3060");
+			                    break;
+	                    }
                     }
                 });
                 dialog.show();

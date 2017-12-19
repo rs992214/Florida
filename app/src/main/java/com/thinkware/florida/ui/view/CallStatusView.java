@@ -3,7 +3,6 @@ package com.thinkware.florida.ui.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +15,7 @@ import com.thinkware.florida.R;
 public class CallStatusView extends LinearLayout {
     ImageView icRed, icGreen, icBlue, icYellow;
     TextView txtNumber;
+    LinearLayout container;
 
     public CallStatusView(Context context) {
         super(context);
@@ -41,6 +41,7 @@ public class CallStatusView extends LinearLayout {
         icGreen = (ImageView)findViewById(R.id.status_02);
         icBlue = (ImageView)findViewById(R.id.status_03);
         icYellow = (ImageView)findViewById(R.id.status_04);
+	    container = (LinearLayout)findViewById(R.id.status_container);
     }
 
     public void setCarID(String carID) {
@@ -66,8 +67,10 @@ public class CallStatusView extends LinearLayout {
     public void setWaiting(boolean status) {
         if (status) {
             icBlue.setImageResource(R.drawable.status_03);
+	        container.setBackground(getResources().getDrawable(R.drawable.status_bg_ready));
         } else {
             icBlue.setImageResource(R.drawable.disable);
+	        container.setBackground(getResources().getDrawable(R.drawable.status_bg));
         }
     }
 

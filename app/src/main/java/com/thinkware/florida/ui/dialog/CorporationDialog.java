@@ -18,6 +18,7 @@ public class CorporationDialog extends Dialog {
 
     private CheckBox cbIndivisual;
     private CheckBox cbCorporation;
+	private CheckBox cbSunCheon, cbHanamIndividual, cbHanamCorporation;
     private ICorporationDialogListener listener;
 
     public interface ICorporationDialogListener {
@@ -52,8 +53,23 @@ public class CorporationDialog extends Dialog {
         findViewById(R.id.done).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cbIndivisual.isChecked() || cbCorporation.isChecked()) {
-                    listener.onSelectedType(cbIndivisual.isChecked() ? 1 : 2);
+                if (cbIndivisual.isChecked() || cbCorporation.isChecked() ||
+		                cbSunCheon.isChecked() || cbHanamIndividual.isChecked() || cbHanamCorporation.isChecked()) {
+
+                	int selectedType = 0;
+                	if (cbIndivisual.isChecked()) {
+                		selectedType = 1;
+	                } else if (cbCorporation.isChecked()) {
+		                selectedType = 2;
+	                } else if (cbSunCheon.isChecked()) {
+                		selectedType = 3;
+	                } else if (cbHanamIndividual.isChecked()) {
+		                selectedType = 4;
+	                } else if (cbHanamCorporation.isChecked()) {
+		                selectedType = 5;
+	                }
+
+                    listener.onSelectedType(selectedType);
                     dismiss();
                 }
             }
@@ -71,7 +87,10 @@ public class CorporationDialog extends Dialog {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    cbCorporation.setChecked(false);
+	                cbCorporation.setChecked(false);
+	                cbSunCheon.setChecked(false);
+	                cbHanamIndividual.setChecked(false);
+	                cbHanamCorporation.setChecked(false);
                 }
             }
         });
@@ -81,11 +100,53 @@ public class CorporationDialog extends Dialog {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    cbIndivisual.setChecked(false);
+	                cbIndivisual.setChecked(false);
+	                cbSunCheon.setChecked(false);
+	                cbHanamIndividual.setChecked(false);
+	                cbHanamCorporation.setChecked(false);
                 }
             }
         });
 
-        cbIndivisual.setChecked(true);
+	    cbSunCheon = (CheckBox) findViewById(R.id.checkboxSunCheon);
+	    cbSunCheon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		    @Override
+		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			    if (isChecked) {
+				    cbIndivisual.setChecked(false);
+				    cbCorporation.setChecked(false);
+				    cbHanamIndividual.setChecked(false);
+				    cbHanamCorporation.setChecked(false);
+			    }
+		    }
+	    });
+
+	    cbHanamIndividual = (CheckBox) findViewById(R.id.checkboxHanamIndividual);
+	    cbHanamIndividual.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		    @Override
+		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			    if (isChecked) {
+				    cbIndivisual.setChecked(false);
+				    cbCorporation.setChecked(false);
+				    cbSunCheon.setChecked(false);
+				    cbHanamCorporation.setChecked(false);
+			    }
+		    }
+	    });
+
+	    cbHanamCorporation = (CheckBox) findViewById(R.id.checkboxHanamCorporation);
+	    cbHanamCorporation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		    @Override
+		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			    if (isChecked) {
+				    cbIndivisual.setChecked(false);
+				    cbCorporation.setChecked(false);
+				    cbSunCheon.setChecked(false);
+				    cbHanamIndividual.setChecked(false);
+			    }
+		    }
+	    });
+
+	    cbIndivisual.setChecked(true);
     }
 }

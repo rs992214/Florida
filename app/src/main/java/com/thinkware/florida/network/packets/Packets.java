@@ -25,9 +25,10 @@ public class Packets {
     public static final int REQUEST_ORDER_REALTIME = 0x1911; // 실시간 위치 및 배차요청
     public static final int REQUEST_REST = 0x1B11; // 휴식/운행재개
     public static final int LIVE = 0xF1F1; // Live 패킷
+	public static final int REQUEST_CALL_INFO = 0x1A11; // 배차정보요청 (추가 2017. 12. 19 - 권석범)
 
 
-    //----------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------
     // Server -> MDT : 17
     //----------------------------------------------------------------------------------------
     public static final int RESPONSE_ACK = 0xFF11; // 접속종료 (ACK의 응답 목적으로 사용 한다.)
@@ -310,6 +311,8 @@ public class Packets {
                 return 7;
             case RESPONSE_WAIT_AREA_STATE: //대기지역 현황 정보 응답
                 return 244;
+	        case REQUEST_CALL_INFO: // 배차정보 요청
+		        return 19;
             default:
                 return 0;
         }

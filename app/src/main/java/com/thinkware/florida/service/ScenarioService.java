@@ -30,6 +30,7 @@ import com.thinkware.florida.network.packets.mdt2server.AckPacket;
 import com.thinkware.florida.network.packets.mdt2server.LivePacket;
 import com.thinkware.florida.network.packets.mdt2server.PeriodSendingPacket;
 import com.thinkware.florida.network.packets.mdt2server.RequestAccountPacket;
+import com.thinkware.florida.network.packets.mdt2server.RequestCallInfoPacket;
 import com.thinkware.florida.network.packets.mdt2server.RequestCallerInfoPacket;
 import com.thinkware.florida.network.packets.mdt2server.RequestConfigPacket;
 import com.thinkware.florida.network.packets.mdt2server.RequestEmergencyPacket;
@@ -83,6 +84,7 @@ import com.thinkware.florida.utility.log.LogHelper;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -987,7 +989,20 @@ public class ScenarioService extends Service {
                 request(packet);
             }
         }).start();
+    }
 
+	// 2017. 12. 19 - 권석범
+	// 배차상태 & 저장된 고객정보가 없을 경우 배차정보요청 패킷(GT-1A11) 전송
+    public void requestCallInfo(int callNumber){
+    	RequestCallInfoPacket packet = new RequestCallInfoPacket();
+	    packet.setCorporationCode(cfgLoader.getCorportaionCode());
+	    packet.setCarId(cfgLoader.getCarId());
+	    Calendar calendar = Calendar.getInstance();
+	    String today = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
+	    packet.setCallReceiptDate(today);
+	    packet.setCallNumber(callNumber);
+	    //LogHelper.e("callInfoPacket : " + packet);
+	    request(packet);
     }
 
     //----------------------------------------------------------------------------------------
@@ -1211,6 +1226,15 @@ public class ScenarioService extends Service {
                     if (packet.hasMessage()) {
                         requestMessage();
                     }
+
+	                // 2017. 12. 19 - 권석범
+	                // 배차상태 & 저장된 고객정보가 없을 경우 배차정보요청 패킷(GT-1A11) 전송
+	                if (packet.hasOrder()){
+		                OrderInfoPacket orderInfoPacket = PreferenceUtil.getNormalCallInfo(getApplicationContext());
+		                if (orderInfoPacket == null) {
+							requestCallInfo(packet.getCallNumber());
+		                }
+	                }
                 }
                 break;
                 case Packets.RESPONSE_REST: // 휴식/운행재개

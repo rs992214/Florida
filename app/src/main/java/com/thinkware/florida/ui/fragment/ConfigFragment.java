@@ -149,14 +149,14 @@ public class ConfigFragment extends BaseFragment {
 			                    txtAppServerIP3.setText("86");
 			                    txtAppServerIP4.setText("162");
 			                    txtAppServerPort.setText("3000");
-			                    txtUpdateServerIP1.setText("58");
-			                    txtUpdateServerIP2.setText("180");
-			                    txtUpdateServerIP3.setText("28");
-			                    txtUpdateServerIP4.setText("207");
+			                    txtUpdateServerIP1.setText("218");
+			                    txtUpdateServerIP2.setText("149");
+			                    txtUpdateServerIP3.setText("86");
+			                    txtUpdateServerIP4.setText("162");
 			                    txtUpdateServerPort.setText("3060");
 			                    break;
 		                    case 4:  // 하남 개인
-			                    toggleIsCorp.setChecked(true);
+			                    toggleIsCorp.setChecked(false);
 			                    txtServiceCode.setText("11");
 			                    txtCorpCode.setText("1");
 			                    txtAppServerIP1.setText("58");
@@ -167,7 +167,7 @@ public class ConfigFragment extends BaseFragment {
 			                    txtUpdateServerIP1.setText("58");
 			                    txtUpdateServerIP2.setText("180");
 			                    txtUpdateServerIP3.setText("28");
-			                    txtUpdateServerIP4.setText("207");
+			                    txtUpdateServerIP4.setText("208");
 			                    txtUpdateServerPort.setText("3060");
 			                    break;
 		                    case 5:  // 하남 법인
@@ -182,7 +182,7 @@ public class ConfigFragment extends BaseFragment {
 			                    txtUpdateServerIP1.setText("58");
 			                    txtUpdateServerIP2.setText("180");
 			                    txtUpdateServerIP3.setText("28");
-			                    txtUpdateServerIP4.setText("207");
+			                    txtUpdateServerIP4.setText("215");
 			                    txtUpdateServerPort.setText("3060");
 			                    break;
 	                    }
